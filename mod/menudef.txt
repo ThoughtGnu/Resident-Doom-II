@@ -1,0 +1,256 @@
+// The title screen's see-through layer: PRESS ENTER TO PLAY (zscript/RE_Title.zs).
+ListMenu "RETitle"
+{
+	Class "RETitleMenu"
+}
+
+// New Game asks Jill or Chris on our own screen (zscript/RE_CharSelect.zs)
+// instead of GZDoom's plain "Choose Class" list.
+ListMenu "PlayerclassMenu"
+{
+	Class "RECharSelectMenu"
+}
+
+// Main menu in game (Esc): the RESIDENT DOOM logo above, the red menu font. In game, the
+// "Main Menu" item (end the game, back to the title) is added at the end.
+// Manual, Records, Cheats and Credits are under Extras (below).
+ListMenu "MainMenu"
+{
+	Class "REMainMenu"   // over the title screen it becomes REMainMenuTitle (RE_Title.zs)
+	Size 320, 240   // a little taller than Doom's 320x200, so the items fit well spaced under the logo
+	LineSpacing 18
+	StaticPatch 132, 2, "RELOGO"   // textures.txt
+	Position 97, 71
+	TextItem "New Game", "n", "PlayerclassMenu"
+	TextItem "Level Select", "v", "RELevelSelect"
+	TextItem "Load Game", "l", "LoadGameMenu"
+	TextItem "Save Game", "s", "SaveGameMenu"
+	TextItem "Settings", "e", "RESettingsMenu"
+	TextItem "Extras", "x", "REExtrasMenu"
+	TextItem "Quit Game", "q", "QuitMenu"
+	REIngameItem "Main Menu", "m", "EndGameMenu"
+}
+
+// The same menu opened from the title screen (RE_Title.zs): no small logo, since
+// the big title picture shows it, and the items where they were before it.
+ListMenu "REMainMenuTitle"
+{
+	Size Clean   // the same scaling as GZDoom's own main menu
+	LineSpacing 17
+	Position 97, 46
+	TextItem "New Game", "n", "PlayerclassMenu"
+	TextItem "Level Select", "v", "RELevelSelect"
+	TextItem "Load Game", "l", "LoadGameMenu"
+	TextItem "Save Game", "s", "SaveGameMenu"
+	TextItem "Settings", "e", "RESettingsMenu"
+	TextItem "Extras", "x", "REExtrasMenu"   // over the title picture it adds a dark layer (RE_Title.zs)
+	TextItem "Quit Game", "q", "QuitMenu"
+}
+// The same, for when GZDoom shows its menus as text (other languages).
+ListMenu "MainMenuTextOnly"
+{
+	Class "REMainMenu"
+	Size 320, 240
+	LineSpacing 18
+	StaticPatch 132, 2, "RELOGO"
+	Position 97, 71
+	TextItem "New Game", "n", "PlayerclassMenu"
+	TextItem "Level Select", "v", "RELevelSelect"
+	TextItem "Load Game", "l", "LoadGameMenu"
+	TextItem "Save Game", "s", "SaveGameMenu"
+	TextItem "Settings", "e", "RESettingsMenu"
+	TextItem "Extras", "x", "REExtrasMenu"
+	TextItem "Quit Game", "q", "QuitMenu"
+	REIngameItem "Main Menu", "m", "EndGameMenu"
+}
+
+// Main menu > Extras: the same look and place as the in-game menu above (logo,
+// red font, items where the main menu's start), from the title screen too. Back, Esc or right-click goes
+// back to the menu it came from (REExtrasMenu, RE_Title.zs).
+ListMenu "REExtrasMenu"
+{
+	Class "REExtrasMenu"
+	Size 320, 240
+	LineSpacing 18
+	StaticPatch 132, 2, "RELOGO"
+	Position 97, 71
+	TextItem "Manual", "a", "REManualMenu"   // RE_Manual.zs
+	TextItem "Records", "d", "RERecordsMenu"   // RE_Records.zs
+	TextItem "Cheats", "c", "RECheatsMenu"
+	TextItem "Credits", "r", "RECreditsMenu"
+	REBackItem "Back", "b", "None"
+}
+
+// Main menu > Settings. GZDoom's own Options menu can't be renamed by a mod,
+// so this is our own, opening the same GZDoom pages.
+OptionMenu "RESettingsMenu"
+{
+	Class "RETitleOptionMenu"   // a dark layer over the title picture (RE_Title.zs)
+	Title "SETTINGS"
+	Submenu "Controls (every action and its keys)", "REControlsMenu"
+	Submenu "Gameplay", "REGameplayMenu"
+	StaticText " "
+	StaticText "Change controls", 1
+	Submenu "Customize Controls", "CustomizeControls"
+	Submenu "Mouse", "MouseOptions"
+	Submenu "Gamepad", "JoystickOptions"
+	StaticText " "
+	StaticText "Video", 1
+	Slider "Field of View (first person)", "fov", 75, 120, 1, 0   // GZDoom's own fov setting (kept in its settings file); RE_View.zs updates the view at once
+	Submenu "Display Options", "VideoOptions"
+	Submenu "Set Video Mode", "VideoModeMenu"
+	StaticText " "
+	StaticText "Audio", 1
+	Submenu "Sound Options", "SoundOptions"
+	StaticText " "
+	Submenu "Advanced", "REAdvancedMenu"
+}
+
+// Settings > Controls: every action with its current keys (zscript/RE_Controls.zs).
+OptionMenu "REControlsMenu"
+{
+	Class "REControlsMenu"
+	Title "CONTROLS"
+}
+
+// Settings > Advanced: the rest of GZDoom's options pages.
+OptionMenu "REAdvancedMenu"
+{
+	Class "RETitleOptionMenu"
+	Title "ADVANCED"
+	Submenu "$OPTMNU_PLAYER", "NewPlayerMenu"
+	Submenu "Doom Gameplay Options", "GameplayOptions"
+	Submenu "$OPTMNU_COMPATIBILITY", "CompatibilityOptions"
+	Submenu "$OPTMNU_AUTOMAP", "AutomapOptions"
+	Submenu "$OPTMNU_HUD", "HUDOptions"
+	Submenu "$OPTMNU_MISCELLANEOUS", "MiscOptions"
+	Submenu "$OPTMNU_NETWORK", "NetworkOptions"
+	StaticText " "
+	SafeCommand "$OPTMNU_DEFAULTS", "reset2defaults"
+	SafeCommand "$OPTMNU_RESETTOSAVED", "reset2saved"
+	SafeCommand "$OPTMNU_WRITEINI", "writeini"
+	Command "$OPTMNU_CONSOLE", "menuconsole"
+}
+
+// Settings > Gameplay: Resident Doom's own settings (cvarinfo.txt).
+OptionValue "RESaveModes"
+{
+	0, "Normal (save anytime)"
+	2, "Typewriter (typewriter only)"
+	1, "Classic RE (typewriter + Ink Ribbon)"
+}
+OptionValue "REInvStyles"
+{
+	0, "Resident Doom (default)"
+	1, "RE1 Classic"
+}
+OptionValue "RELightModes"
+{
+	0, "Doom (default)"
+	1, "RE1"
+}
+OptionValue "REStartViews"
+{
+	0, "Third person (default)"
+	1, "First person"
+}
+OptionValue "REPartnerPickups"
+{
+	0, "Off (default)"
+	1, "On (RE5 style)"
+}
+OptionValue "REFlatCorpses"
+{
+	0, "Off (Doom)"
+	1, "First person only (default)"
+	2, "Both views"
+}
+OptionMenu "REGameplayMenu"
+{
+	Class "RETitleOptionMenu"
+	Title "GAMEPLAY"
+	Option "Save mode", "re_save_classic", "RESaveModes"
+	Option "Lighting (key L)", "re_dark", "RELightModes"
+	Option "Inventory style", "re_invstyle", "REInvStyles"
+	Option "AI partner", "re_ai_partner", "OnOff"
+	Option "Partner pickups", "re_partner_pickups", "REPartnerPickups"
+	Option "Starting view", "re_start_view", "REStartViews"
+	Option "Flat corpses", "re_flat_corpses", "REFlatCorpses"
+	Option "Jump (Space)", "re_allow_jump", "OnOff"
+	Option "Crouch (C)", "re_allow_crouch", "OnOff"
+	StaticText " "
+	StaticText "AI partner: off = no partner, and no Both choice.", 1
+	StaticText "Partner pickups: they take ammo for their own gun.", 1
+	StaticText "Starting view: every start and load; V switches any time.", 1
+	StaticText "Flat corpses: bodies lie on the floor, not turning to you.", 1
+}
+
+// Main menu > Extras > Credits.
+OptionMenu "RECreditsMenu"
+{
+	Class "RECreditsMenu"   // drawn in zscript/RE_Title.zs: a dark see-through layer, white text
+	Title "CREDITS"
+}
+
+// Main menu > Extras > Cheats. Works for Jill and Chris (RE_Cheats.zs, RE_Items.zs).
+// Labels stay short: an option's label ends at the middle of the screen, so a
+// long one runs off the left edge when the menu text is drawn large. The
+// longer explanations are centered lines below. A dark layer covers the title
+// logo behind it (RECheatsOptionMenu, zscript/RE_Title.zs).
+OptionMenu "RECheatsMenu"
+{
+	Class "RECheatsOptionMenu"
+	Title "CHEATS"
+	Submenu "Cheat List", "RECheatListMenu"
+	StaticText " "
+	Option "Infinite Ammo", "re_cheat_ammo", "OnOff"
+	Option "Invincibility", "re_cheat_god", "OnOff"
+	Option "Super Jump", "re_cheat_jump", "OnOff"
+	Option "All Weapons (keys 1-7)", "re_cheat_weapons", "OnOff"
+	StaticText " "
+	StaticText "All Weapons: keys 1-7 or the mouse wheel,", 1
+	StaticText "7 = flamethrower (Chris only)", 1
+	StaticText "Cheat List: what each does + console commands", 1
+	StaticText "Cheats switch off when you quit the game.", 1
+}
+
+// Main menu > Level Select (zscript/RE_LevelSelect.zs adds the levels).
+OptionValue "RECharacters"
+{
+	0, "Jill"
+	1, "Chris"
+}
+OptionMenu "RELevelSelect"
+{
+	Class "RELevelSelectMenu"
+	Title "LEVEL SELECT"
+	Option "Character", "re_levelchar", "RECharacters"
+}
+
+// The save screen, with the save modes (zscript/RE_Typewriter.zs).
+ListMenu "SaveGameMenu"
+{
+	CaptionItem "$MNU_SAVEGAME"
+	Position 80,40
+	Class "RESaveMenu"
+	Size Clean
+}
+
+
+// The load screen: GZDoom's own, with the "DEL: delete save" hint (RE_Typewriter.zs).
+ListMenu "LoadGameMenu"
+{
+	NetgameMessage "$LOADNET"
+	CaptionItem "$MNU_LOADGAME"
+	Position 80,40
+	Class "RELoadMenu"
+	Size Clean
+}
+
+// Main menu > Extras > Cheats > Cheat List: every cheat, what it does, its console command
+// (drawn by RECheatListMenu, zscript/RE_Cheats.zs).
+OptionMenu "RECheatListMenu"
+{
+	Class "RECheatListMenu"
+	Title "CHEAT LIST"
+}

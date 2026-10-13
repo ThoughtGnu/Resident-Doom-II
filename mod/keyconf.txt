@@ -1,0 +1,47 @@
+// Adds a "Resident Doom" page to Options > Customize Controls.
+
+alias re_inventory "openmenu REInventoryMenu"
+alias re_map "openmenu REMapMenu"
+alias re_view "netevent re_view"
+alias re_lights "toggle re_dark"
+alias re_superjump "toggle re_cheat_jump"
+alias re_allweapons "toggle re_cheat_weapons"
+alias re_jillflamer "toggle re_cheat_jillflame; netevent re_jillflamer"   // cheat: Jill may use the flamethrower; switched on, it goes into her hands (RE_Cheats.zs)
+// F6 (keys.cfg binds GZDoom's quicksave itself; this name is kept for old key setups)
+alias re_quicksave "quicksave"
+alias re_bossfight "re_finalboss 1; map MAP30"
+// Toggle Run (CapsLock, keys.cfg): switches cl_run like GZDoom's "toggle cl_run",
+// but with "set", which prints nothing; the game shows "Always run: ON / OFF"
+// like a pickup message instead (RE_Input.zs). The two halves swap places each
+// press; keys.cfg sets cl_run 0 and re_togglerun back to re_runon at every start.
+alias re_runon "set cl_run 1; alias re_togglerun re_runoff; netevent re_runmsg 1"
+alias re_runoff "set cl_run 0; alias re_togglerun re_runon; netevent re_runmsg 0"
+// (re_togglerun itself is made in keys.cfg, not here: an alias from KEYCONF puts
+// its old command back after it runs, so it could never swap)
+// Testing: re_poison in the console poisons you (RE_Poison.zs)
+alias re_poison "netevent re_poison"
+
+// The typed cheat codes as console commands too (RE_Cheats.zs), with or without a period.
+alias starsteam "netevent re_cheatcode 0"
+alias starsteam. "netevent re_cheatcode 0"
+alias rocketman "netevent re_cheatcode 1"
+alias rocketman. "netevent re_cheatcode 1"
+alias jillsandwich "netevent re_cheatcode 2"
+alias jillsandwich. "netevent re_cheatcode 2"
+alias inkribbon "netevent re_cheatcode 3"
+alias inkribbon. "netevent re_cheatcode 3"
+
+addkeysection "Resident Doom" ResidentDoom
+addmenukey "Inventory screen" re_inventory
+addmenukey "Aim (hold)" +user1
+addmenukey "Run (hold)" +speed
+addmenukey "Action / fire while aiming" +use
+addmenukey "First-person view on/off" re_view
+addmenukey "Dark lighting on/off" re_lights
+addmenukey "Crouch (hold)" +crouch
+addmenukey "Map screen" re_map
+// The ending cast call, straight away (RE_Cast.zs): for whoever is playing, or one version
+alias re_castcall "netevent re_castcall 0"
+alias re_castcall_jill "netevent re_castcall 1"
+alias re_castcall_chris "netevent re_castcall 2"
+alias re_castcall_both "netevent re_castcall 3"

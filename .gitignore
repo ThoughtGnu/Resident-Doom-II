@@ -1,0 +1,64 @@
+# Resident Doom: only our own work goes into the repository.
+#
+# Everything is ignored first, then our own files are allowed back one by one.
+# Never allowed: any Capcom (Resident Evil) or id Software (DOOM) file, anything
+# setup builds from them (models, pictures, sounds), GZDoom, settings, saves,
+# screenshots, backups and work folders. Check before every upload:
+# docs/REPO_FILES.txt lists exactly what's allowed.
+
+# 1. ignore everything (folders stay visible so git can look inside them)
+*
+!*/
+
+# 2. top level
+!/.gitignore
+!/.gitattributes
+!/README.md
+!/MANUAL.md
+!/LICENSE
+!/THIRD-PARTY-NOTICES.md
+!/keys.cfg
+!/setup.bat
+!/setup.command
+!/play.bat
+!/play_mansion.bat
+!/play_doom2.bat
+!/play.command
+!/play_mansion.command
+!/play_doom2.command
+
+# 3. documentation
+!/docs/*.md
+!/docs/REPO_FILES.txt
+
+# 4. the mod: our scripts and definitions
+!/mod/zscript.zs
+!/mod/zscript/*.zs
+!/mod/*.txt
+!/mod/maps/REMAP01.wad
+!/mod/maps/src/TEXTMAP.txt
+!/mod/graphics/M_DOOM.png
+!/mod/sprites/re/*.png
+
+# 5. the converter, setup and tool scripts
+!/tools/re1convert/*.cs
+!/tools/re1convert/re1convert.csproj
+!/tools/re1convert/build.bat
+!/tools/setup/setup.ps1
+!/tools/setup/manifest.txt
+!/tools/pack_map.ps1
+
+# 6. built by setup from the player's games: never in the repository
+/mod/textures.cast.txt
+/mod/re1status.txt
+/mod/sprites/re/RFLM*.png
+
+# 7. work and test folders (they may hold their own copy of this file)
+/_cleantest/
+/_dev/
+/reference/
+/manual_screenshots/
+/tools/gzdoom/
+/tools/gzdoom-mac/
+/tools/dotnet/
+/iwad/

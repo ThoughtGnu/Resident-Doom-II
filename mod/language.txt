@@ -1,0 +1,5 @@
+// Text replacements. ENDGAME is the question GZDoom asks before ending the
+// game (pause menu > Main Menu, and Options > End Game).
+[enu default]
+REQUITMSG = "Are you sure you want to quit?";
+ENDGAME ="Return to the main menu?\n\nAre you sure?\nUnsaved progress will be lost.\n\n(Press Y or N.)";

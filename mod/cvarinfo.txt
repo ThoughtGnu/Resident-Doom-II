@@ -1,0 +1,101 @@
+// Settings you can change from the GZDoom console (press ~).
+
+// Multiplies walk/run/back-up speed. 1.0 = RE1's speed converted to Doom units.
+server float re_speedscale = 1.0;
+
+// Prints "camera N" to the console every time the fixed camera cuts.
+server bool re_debugcams = false;
+
+// RE1 lighting (RE_Lighting.zs), used only in the RE1 lighting mode. Brightness
+// multipliers applied when a map starts: indoors and outdoors (sky). Rooms at or
+// below re_rooms_keep are left as they are; brighter rooms never go below it.
+server float re_rooms_dark = 0.6;
+server float re_rooms_dark_sky = 0.7;
+server int re_rooms_keep = 64;
+// ...but no room loses more than this much brightness, so bright areas (seen far
+// down a corridor) don't fade to black.
+server int re_rooms_cut = 32;
+
+// A dim light that follows Jill so she stays visible in dark rooms.
+server bool re_jill_light = true;
+
+
+// RE1 lighting: Jill, Chris and the partner are drawn at least this bright (0-255; 0 = room light only).
+server int re_char_minlight = 104;
+
+// Lighting: 0 = Doom (default, the levels as Doom made them), 1 = RE1 (darker
+// rooms, a light around the player, characters and pickups kept readable).
+// Settings > Gameplay > Lighting, the L key or the console command re_lights.
+// Remembered between sessions.
+server bool re_dark = false;
+
+// Cheats (main menu > Cheats). Not remembered: every launch starts with them off.
+server noarchive bool re_cheat_ammo = false;   // guns never use rounds
+server noarchive bool re_cheat_god = false;    // no damage
+
+// Level Select: the character it starts with (0 Jill, 1 Chris).
+server int re_levelchar = 0;
+// Set for one map start by the Final Boss choice (console: re_bossfight).
+server noarchive int re_finalboss = 0;
+server noarchive bool re_cheat_jump = false;   // Cheats: Super Jump (much higher jumps)
+
+// Cheats: All Weapons (every RE weapon fully loaded, number keys / mouse wheel; ammo runs out as usual).
+server noarchive bool re_cheat_weapons = false;
+// Cheat: Jill may use the flamethrower too (console re_jillflamer; RE1: Chris only).
+server noarchive bool re_cheat_jillflame = false;
+// Save mode: 0 = Normal saves anytime, 2 = Typewriter (typewriter only, no ribbon), 1 = Classic RE saves (typewriter + Ink Ribbon).
+server int re_save_classic = 0;
+
+// AI partner (character select "Both"): 0 none, 1 Jill follows you, 2 Chris follows you.
+server noarchive int re_partner = 0;
+
+// Settings > Gameplay (menudef.txt REGameplayMenu). Remembered between launches.
+server bool re_ai_partner = true;   // AI partner allowed (off: never spawns, no "Both" choice)
+server bool re_partner_pickups = false;   // the AI partner picks up ammo for the gun they hold (RE5 style)
+server int re_start_view = 0;       // every start (new game, level, loaded save, Continue): 0 third person (fixed cameras), 1 first person
+server bool re_allow_jump = true;   // Space jumps (the Super Jump cheat works either way)
+server bool re_allow_crouch = true; // C crouches
+server int re_flat_corpses = 1;     // corpses lie flat on the floor (RE_Corpses.zs): 0 off (Doom's, they face you), 1 first person only, 2 both views
+server float re_flat_corpse_stretch = 1.5;   // flat corpses: the picture stretched lengthways (0.5-3), so a body seen at a shallow angle isn't a thin line
+
+// Records (RE_Records.zs): your best clear of each map, per character and difficulty.
+// "J2|tics|kills%|secrets%|items%|saves|ribbons|date" entries, ';' between them. Kept in the settings file.
+user string re_rec_MAP01 = "";
+user string re_rec_MAP02 = "";
+user string re_rec_MAP03 = "";
+user string re_rec_MAP04 = "";
+user string re_rec_MAP05 = "";
+user string re_rec_MAP06 = "";
+user string re_rec_MAP07 = "";
+user string re_rec_MAP08 = "";
+user string re_rec_MAP09 = "";
+user string re_rec_MAP10 = "";
+user string re_rec_MAP11 = "";
+user string re_rec_MAP12 = "";
+user string re_rec_MAP13 = "";
+user string re_rec_MAP14 = "";
+user string re_rec_MAP15 = "";
+user string re_rec_MAP16 = "";
+user string re_rec_MAP17 = "";
+user string re_rec_MAP18 = "";
+user string re_rec_MAP19 = "";
+user string re_rec_MAP20 = "";
+user string re_rec_MAP21 = "";
+user string re_rec_MAP22 = "";
+user string re_rec_MAP23 = "";
+user string re_rec_MAP24 = "";
+user string re_rec_MAP25 = "";
+user string re_rec_MAP26 = "";
+user string re_rec_MAP27 = "";
+user string re_rec_MAP28 = "";
+user string re_rec_MAP29 = "";
+user string re_rec_MAP30 = "";
+user string re_rec_MAP31 = "";
+user string re_rec_MAP32 = "";
+user string re_rec_REMAP01 = "";
+user string re_rec_BOSS = "";
+user string re_rec_last = "";   // the character and difficulty last recorded (the Records screen starts there)
+
+// Settings > Gameplay > Inventory style: 0 Resident Doom (default), 1 RE1 Classic (RE1's own status
+// screen and item box screen, RE_InvClassic.zs). Only the look; kept in the settings file.
+server int re_invstyle = 0;

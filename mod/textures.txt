@@ -1,0 +1,9 @@
+// The RESIDENT DOOM logo above the main / pause menu (menudef.txt). The picture
+// (graphics/RELOGOHR.png, 492x575: RESIDENT from the title picture, DOOM from
+// the original DOOM's M_DOOM) is shown 66 units tall on the menu's 320x200 layout.
+Graphic RELOGO, 492, 575
+{
+	XScale 8.712
+	YScale 8.712
+	Patch "RELOGOHR", 0, 0
+}

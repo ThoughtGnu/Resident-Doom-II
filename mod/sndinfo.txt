@@ -1,0 +1,28 @@
+// Click of an empty gun (reuses Doom's switch sound).
+weapons/re_dryfire DSSWTCHN
+
+// RE1's own weapon sounds, copied from your GOG copy (USA\Sound). Each gun's
+// shot is the 7th sound of its bank in the decomp's SFXIds.h. Folder sounds need
+// their full file name (with .wav), or GZDoom finds nothing and stays silent.
+re1/beretta        sounds/re1/gun01.wav
+re1/shotgun        sounds/re1/shot01.wav
+re1/shotgunpump    sounds/re1/shot03.wav   // the pump after each shot (two clicks, 0.14 s apart)
+re1/magnum         sounds/re1/magnum01.wav
+re1/grenade        sounds/re1/grbomb02.wav
+re1/acid           sounds/re1/gracid02.wav
+re1/flame          sounds/re1/grfire02.wav
+re1/rocket         sounds/re1/rocket01.wav
+re1/grenadeblast   sounds/re1/grbomb03.wav
+re1/acidblast      sounds/re1/gracid03.wav
+re1/flameblast     sounds/re1/grfire03.wav
+re1/flamethrower   sounds/re1/flame01.wav   // Chris's flamethrower, looped while it burns
+re1/flamethrowerend sounds/re1/flame03.wav
+re1/rocketblast    sounds/re1/rocket03.wav
+re1/knifeswing     sounds/re1/knife01.wav
+re1/knifehit       sounds/re1/knife02.wav
+
+// The characters' RE1 death screams (RE1 plays character voice slot 3 when the
+// player dies: PlayerAnimations.cpp, Play3DSnd(3, 3, ...); SoundSystem.cpp's
+// tables: Jill04 / Chris04). Used by the ending cast call (RE_Cast.zs).
+re1/jilldeath      sounds/re1/jill04.wav
+re1/chrisdeath     sounds/re1/chris04.wav

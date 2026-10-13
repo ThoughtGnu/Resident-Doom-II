@@ -1,0 +1,14 @@
+# Line endings: Windows scripts keep CRLF, Mac scripts keep LF, on every machine.
+* text=auto
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.command text eol=lf
+*.sh text eol=lf
+*.cs text
+*.zs text
+*.txt text
+*.md text
+*.cfg text
+*.csproj text
+*.png binary
+*.wad binary

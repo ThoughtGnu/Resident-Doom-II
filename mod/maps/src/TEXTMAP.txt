@@ -1,0 +1,220 @@
+// ===========================================================================
+// Resident Doom - MAP01 "Mansion - West Wing", written by hand in UDMF.
+//
+// Layout (Doom map units; x grows east, y grows north):
+//
+//                 +-----------------------+  y 1296
+//                 |      DINING ROOM      |
+//                 |      (sector 4)       |
+//                 +-------[door2]---------+  y 848
+//                         |     |
+//                         |  C  |  corridor, second leg
+//                         |  O  |
+//   +-----------+         |  R  |
+//   | MAIN HALL |[door1]--+  R  |  corridor, first leg (sector 2)
+//   | (sector 0)|---------------+  y 192
+//   +-----------+
+//   x 0       x 640               x 1040
+//
+// How UDMF works, in short:
+//   vertex  = a corner point
+//   linedef = a wall between two vertices. Its "front" side (sidefront) is
+//             on the RIGHT when you walk from v1 to v2. Here every room is
+//             traced clockwise, so the right-hand side is always inside.
+//   sidedef = the texture on one side of a linedef, and which sector it's in
+//   sector  = a room: floor/ceiling heights, flat textures, brightness
+//   thing   = player start, items, monsters
+//
+// After editing, run tools\pack_map.ps1 to rebuild mod\maps\MAP01.wad.
+// ===========================================================================
+
+namespace = "zdoom";
+
+// ---------------------------------------------------------------------------
+// Vertices (numbered from 0 in the order they appear)
+// ---------------------------------------------------------------------------
+vertex { x = 0.0;    y = 0.0; }     // 0  hall SW
+vertex { x = 0.0;    y = 512.0; }   // 1  hall NW
+vertex { x = 640.0;  y = 512.0; }   // 2  hall NE
+vertex { x = 640.0;  y = 288.0; }   // 3  door1, hall side, north
+vertex { x = 640.0;  y = 224.0; }   // 4  door1, hall side, south
+vertex { x = 640.0;  y = 0.0; }     // 5  hall SE
+vertex { x = 656.0;  y = 288.0; }   // 6  door1, corridor side, north
+vertex { x = 656.0;  y = 224.0; }   // 7  door1, corridor side, south
+vertex { x = 656.0;  y = 192.0; }   // 8  corridor SW
+vertex { x = 656.0;  y = 320.0; }   // 9  corridor NW (first leg)
+vertex { x = 912.0;  y = 320.0; }   // 10 corridor inner corner
+vertex { x = 912.0;  y = 832.0; }   // 11 corridor NW (second leg)
+vertex { x = 944.0;  y = 832.0; }   // 12 door2, corridor side, west
+vertex { x = 1008.0; y = 832.0; }   // 13 door2, corridor side, east
+vertex { x = 1040.0; y = 832.0; }   // 14 corridor NE
+vertex { x = 1040.0; y = 192.0; }   // 15 corridor SE
+vertex { x = 944.0;  y = 848.0; }   // 16 door2, dining side, west
+vertex { x = 1008.0; y = 848.0; }   // 17 door2, dining side, east
+vertex { x = 720.0;  y = 848.0; }   // 18 dining SW
+vertex { x = 720.0;  y = 1296.0; }  // 19 dining NW
+vertex { x = 1296.0; y = 1296.0; }  // 20 dining NE
+vertex { x = 1296.0; y = 848.0; }   // 21 dining SE
+
+// ---------------------------------------------------------------------------
+// Sectors (rooms)
+// ---------------------------------------------------------------------------
+sector  // 0 main hall
+{
+	heightfloor = 0;
+	heightceiling = 192;
+	texturefloor = "FLAT5_2";
+	textureceiling = "CEIL3_5";
+	lightlevel = 160;
+}
+sector  // 1 door1 (closed: ceiling down on the floor)
+{
+	heightfloor = 0;
+	heightceiling = 0;
+	texturefloor = "FLAT5_2";
+	textureceiling = "FLAT20";
+	lightlevel = 144;
+}
+sector  // 2 corridor
+{
+	heightfloor = 0;
+	heightceiling = 128;
+	texturefloor = "FLOOR7_1";
+	textureceiling = "CEIL3_5";
+	lightlevel = 128;
+}
+sector  // 3 door2
+{
+	heightfloor = 0;
+	heightceiling = 0;
+	texturefloor = "FLAT5_2";
+	textureceiling = "FLAT20";
+	lightlevel = 136;
+}
+sector  // 4 dining room
+{
+	heightfloor = 0;
+	heightceiling = 160;
+	texturefloor = "FLAT5_2";
+	textureceiling = "CEIL3_5";
+	lightlevel = 144;
+}
+
+// ---------------------------------------------------------------------------
+// Sidedefs (wall textures), numbered from 0
+// ---------------------------------------------------------------------------
+sidedef { sector = 0; texturemiddle = "WOOD9"; }                       // 0  hall west
+sidedef { sector = 0; texturemiddle = "WOOD9"; }                       // 1  hall north
+sidedef { sector = 0; texturemiddle = "WOOD9"; }                       // 2  hall east, north part
+sidedef { sector = 0; texturetop = "DOOR3"; }                          // 3  door1, hall face
+sidedef { sector = 1; }                                                // 4  door1, inside
+sidedef { sector = 0; texturemiddle = "WOOD9"; }                       // 5  hall east, south part
+sidedef { sector = 0; texturemiddle = "WOOD9"; }                       // 6  hall south
+sidedef { sector = 1; texturemiddle = "DOORTRAK"; }                    // 7  door1 jamb north
+sidedef { sector = 1; texturemiddle = "DOORTRAK"; }                    // 8  door1 jamb south
+sidedef { sector = 2; texturetop = "DOOR3"; }                          // 9  door1, corridor face
+sidedef { sector = 1; }                                                // 10 door1, inside
+sidedef { sector = 2; texturemiddle = "PANEL6"; }                      // 11 corridor west, below door1
+sidedef { sector = 2; texturemiddle = "PANEL6"; }                      // 12 corridor west, above door1
+sidedef { sector = 2; texturemiddle = "PANEL6"; }                      // 13 corridor first leg, north wall
+sidedef { sector = 2; texturemiddle = "PANEL6"; }                      // 14 corridor second leg, west wall
+sidedef { sector = 2; texturemiddle = "PANEL6"; }                      // 15 corridor north, west of door2
+sidedef { sector = 2; texturetop = "DOOR3"; }                          // 16 door2, corridor face
+sidedef { sector = 3; }                                                // 17 door2, inside
+sidedef { sector = 2; texturemiddle = "PANEL6"; }                      // 18 corridor north, east of door2
+sidedef { sector = 2; texturemiddle = "PANEL6"; }                      // 19 corridor east wall
+sidedef { sector = 2; texturemiddle = "PANEL6"; }                      // 20 corridor south wall
+sidedef { sector = 3; texturemiddle = "DOORTRAK"; }                    // 21 door2 jamb west
+sidedef { sector = 3; texturemiddle = "DOORTRAK"; }                    // 22 door2 jamb east
+sidedef { sector = 4; texturetop = "DOOR3"; }                          // 23 door2, dining face
+sidedef { sector = 3; }                                                // 24 door2, inside
+sidedef { sector = 4; texturemiddle = "WOOD12"; }                      // 25 dining west
+sidedef { sector = 4; texturemiddle = "WOOD12"; }                      // 26 dining north
+sidedef { sector = 4; texturemiddle = "WOOD12"; }                      // 27 dining east
+sidedef { sector = 4; texturemiddle = "WOOD12"; }                      // 28 dining south, east of door2
+sidedef { sector = 4; texturemiddle = "WOOD12"; }                      // 29 dining south, west of door2
+
+// ---------------------------------------------------------------------------
+// Linedefs (walls). One-sided walls block movement ("blocking").
+// Door lines: special 12 = Door_Raise(tag 0 = the sector behind this line,
+// speed 16, stays open 150 tics), opened with the Action button.
+// ---------------------------------------------------------------------------
+
+// Main hall
+linedef { v1 = 0; v2 = 1; sidefront = 0; blocking = true; }
+linedef { v1 = 1; v2 = 2; sidefront = 1; blocking = true; }
+linedef { v1 = 2; v2 = 3; sidefront = 2; blocking = true; }
+linedef { v1 = 3; v2 = 4; sidefront = 3; sideback = 4; twosided = true;
+          special = 12; arg0 = 0; arg1 = 16; arg2 = 150; playeruse = true; repeatspecial = true; }
+linedef { v1 = 4; v2 = 5; sidefront = 5; blocking = true; }
+linedef { v1 = 5; v2 = 0; sidefront = 6; blocking = true; }
+
+// Door 1 (between hall and corridor)
+linedef { v1 = 3; v2 = 6; sidefront = 7; blocking = true; dontpegbottom = true; }
+linedef { v1 = 7; v2 = 4; sidefront = 8; blocking = true; dontpegbottom = true; }
+linedef { v1 = 7; v2 = 6; sidefront = 9; sideback = 10; twosided = true;
+          special = 12; arg0 = 0; arg1 = 16; arg2 = 150; playeruse = true; repeatspecial = true; }
+
+// Corridor
+linedef { v1 = 8;  v2 = 7;  sidefront = 11; blocking = true; }
+linedef { v1 = 6;  v2 = 9;  sidefront = 12; blocking = true; }
+linedef { v1 = 9;  v2 = 10; sidefront = 13; blocking = true; }
+linedef { v1 = 10; v2 = 11; sidefront = 14; blocking = true; }
+linedef { v1 = 11; v2 = 12; sidefront = 15; blocking = true; }
+linedef { v1 = 12; v2 = 13; sidefront = 16; sideback = 17; twosided = true;
+          special = 12; arg0 = 0; arg1 = 16; arg2 = 150; playeruse = true; repeatspecial = true; }
+linedef { v1 = 13; v2 = 14; sidefront = 18; blocking = true; }
+linedef { v1 = 14; v2 = 15; sidefront = 19; blocking = true; }
+linedef { v1 = 15; v2 = 8;  sidefront = 20; blocking = true; }
+
+// Door 2 (between corridor and dining room)
+linedef { v1 = 12; v2 = 16; sidefront = 21; blocking = true; dontpegbottom = true; }
+linedef { v1 = 17; v2 = 13; sidefront = 22; blocking = true; dontpegbottom = true; }
+linedef { v1 = 17; v2 = 16; sidefront = 23; sideback = 24; twosided = true;
+          special = 12; arg0 = 0; arg1 = 16; arg2 = 150; playeruse = true; repeatspecial = true; }
+
+// Dining room
+linedef { v1 = 18; v2 = 19; sidefront = 25; blocking = true; }
+linedef { v1 = 19; v2 = 20; sidefront = 26; blocking = true; }
+linedef { v1 = 20; v2 = 21; sidefront = 27; blocking = true; }
+linedef { v1 = 21; v2 = 17; sidefront = 28; blocking = true; }
+linedef { v1 = 16; v2 = 18; sidefront = 29; blocking = true; }
+
+// ---------------------------------------------------------------------------
+// Things. angle: 0 = east, 90 = north, 180 = west, 270 = south.
+// Types 200xx are ours (see mod/mapinfo.txt, DoomEdNums).
+// ---------------------------------------------------------------------------
+
+// Player start, in the hall, facing the east door
+thing { x = 232.0; y = 256.0; angle = 0; type = 1;
+        skill1 = true; skill2 = true; skill3 = true; skill4 = true; skill5 = true; single = true; coop = true; }
+
+// Green herb in the hall's north-east corner
+thing { x = 576.0; y = 456.0; angle = 0; type = 20004;
+        skill1 = true; skill2 = true; skill3 = true; skill4 = true; skill5 = true; single = true; coop = true; }
+
+// Clip halfway up the corridor's second leg
+thing { x = 976.0; y = 600.0; angle = 0; type = 20011;
+        skill1 = true; skill2 = true; skill3 = true; skill4 = true; skill5 = true; single = true; coop = true; }
+
+// A dead body at the corridor corner (Doom thing 15), for atmosphere
+thing { x = 968.0; y = 248.0; angle = 180; type = 15;
+        skill1 = true; skill2 = true; skill3 = true; skill4 = true; skill5 = true; single = true; coop = true; }
+
+// Dining room: red herb, green herb and blue herb in the corners
+thing { x = 768.0;  y = 1248.0; angle = 0; type = 20003;
+        skill1 = true; skill2 = true; skill3 = true; skill4 = true; skill5 = true; single = true; coop = true; }
+thing { x = 1248.0; y = 1248.0; angle = 0; type = 20004;
+        skill1 = true; skill2 = true; skill3 = true; skill4 = true; skill5 = true; single = true; coop = true; }
+thing { x = 1248.0; y = 896.0;  angle = 0; type = 20005;
+        skill1 = true; skill2 = true; skill3 = true; skill4 = true; skill5 = true; single = true; coop = true; }
+
+// Candelabras (Doom thing 35) along the dining table
+thing { x = 880.0;  y = 1072.0; angle = 0; type = 35;
+        skill1 = true; skill2 = true; skill3 = true; skill4 = true; skill5 = true; single = true; coop = true; }
+thing { x = 1136.0; y = 1072.0; angle = 0; type = 35;
+        skill1 = true; skill2 = true; skill3 = true; skill4 = true; skill5 = true; single = true; coop = true; }
+
+// The zombie, standing in the dining room facing the door
+thing { x = 1008.0; y = 1152.0; angle = 270; type = 20100;
+        skill1 = true; skill2 = true; skill3 = true; skill4 = true; skill5 = true; single = true; coop = true; }

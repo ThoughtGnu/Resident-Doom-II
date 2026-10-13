@@ -1,0 +1,420 @@
+// Jill's 3D model, converted from RE1's own files by tools\re1convert.
+// The animation is chosen in code (TankPlayer.zs, UpdateAnimation), so the
+// whole actor uses the model and its frames don't come from Doom's states.
+
+Model RETankPlayer
+{
+	Path "models/jill"
+	Model 0 "jill_unarmed.iqm"
+	Skin 0 "jill.png"
+	Scale 1.0 1.0 1.0
+	BaseFrame
+}
+
+// Chris: the same, from his own files (MODELDEF isn't inherited, so his class
+// needs its own block).
+Model REChrisPlayer
+{
+	Path "models/chris"
+	Model 0 "chris_unarmed.iqm"
+	Skin 0 "chris.png"
+	Scale 1.0 1.0 1.0
+	BaseFrame
+}
+
+// First-person arms: each character's own arms and weapon from their eyes,
+// lowered at their side or raised while aiming. Each file is written by
+//   tools\re1convert\re1convert.exe viewarms ...   (commands in README)
+// One line per character and RE weapon.
+#include "models/jill/arm_jill_knife.mdl"
+#include "models/jill/arm_jill_beretta.mdl"
+#include "models/jill/arm_jill_shotgun.mdl"
+#include "models/jill/arm_jill_magnum.mdl"
+#include "models/jill/arm_jill_grenade.mdl"
+#include "models/jill/arm_jill_rocket.mdl"
+#include "models/chris/arm_chris_knife.mdl"
+#include "models/chris/arm_chris_beretta.mdl"
+#include "models/chris/arm_chris_shotgun.mdl"
+#include "models/chris/arm_chris_magnum.mdl"
+#include "models/chris/arm_chris_grenade.mdl"
+#include "models/chris/arm_chris_rocket.mdl"
+#include "models/chris/arm_chris_flame.mdl"
+
+// The typewriter on its table (tools\re1convert\re1convert.exe prop typewriter mod\models\props).
+// Its sprite TYPW A is an invisible placeholder; the model is drawn instead.
+Model RETypewriter
+{
+	Path "models/props"
+	Model 0 "typewriter.iqm"
+	Skin 0 "typewriter.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex TYPW A 0 0
+}
+
+// The AI partner (zscript/RE_Partner.zs): Jill with her Beretta, Chris with the shotgun.
+Model REPartnerJill
+{
+	Path "models/jill"
+	Model 0 "jill_beretta.iqm"
+	Skin 0 "jill.png"
+	Scale 1.0 1.0 1.0
+	BaseFrame
+}
+Model REPartnerChris
+{
+	Path "models/chris"
+	Model 0 "chris_shotgun.iqm"
+	Skin 0 "chris.png"
+	Scale 1.0 1.0 1.0
+	BaseFrame
+}
+
+// Herbs, Ink Ribbons and ammo: RE1's own item models (re1convert items <RE1 USA> mod\models\props\items). Their sprites are invisible placeholders.
+Model REGreenHerb
+{
+	Path "models/props"
+	Model 0 "items/herb_green.iqm"
+	Skin 0 "items/herb_green.png"
+	Scale 1.3 1.3 1.3   // 30% bigger, easier to see from the fixed cameras
+	FrameIndex HRBG A 0 0
+}
+Model RERedHerb
+{
+	Path "models/props"
+	Model 0 "items/herb_red.iqm"
+	Skin 0 "items/herb_red.png"
+	Scale 1.3 1.3 1.3   // 30% bigger, easier to see from the fixed cameras
+	FrameIndex HRBR A 0 0
+}
+Model REBlueHerb
+{
+	Path "models/props"
+	Model 0 "items/herb_blue.iqm"
+	Skin 0 "items/herb_blue.png"
+	Scale 1.3 1.3 1.3   // 30% bigger, easier to see from the fixed cameras
+	FrameIndex HRBB A 0 0
+}
+
+
+// Ink Ribbons, single and stacks of 3 (re1convert prop ribbon mod\models\props).
+// Their sprite INKR A is an invisible placeholder. Doom's armor bonuses keep their helmet.
+Model REInkRibbonPickup
+{
+	Path "models/props"
+	Model 0 "items/ribbon.iqm"
+	Skin 0 "items/ribbon.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex INKR A 0 0
+}
+Model REInkRibbonPack
+{
+	Path "models/props"
+	Model 0 "items/ribbon.iqm"
+	Skin 0 "items/ribbon.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex INKR A 0 0
+}
+
+// Armor pickups: S.T.A.R.S. vests (re1convert prop vests mod\models\props).
+Model REVestLightPickup
+{
+	Path "models/props"
+	Model 0 "vest_light.iqm"
+	Skin 0 "vest.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex VSTL A 0 0
+}
+// Armor bonus: a small S.T.A.R.S. vest patch (zscript REVestPatch).
+Model REVestPatch
+{
+	Path "models/props"
+	Model 0 "vest_light.iqm"
+	Skin 0 "vest.png"
+	Scale 0.35 0.35 0.35
+	FrameIndex VSTP A 0 0
+}
+Model REVestHeavyPickup
+{
+	Path "models/props"
+	Model 0 "vest_heavy.iqm"
+	Skin 0 "vest.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex VSTH A 0 0
+}
+
+// Ammo pickups (RE1's own item models, re1convert items). Sprites AM.. are invisible placeholders.
+Model REClipPickup
+{
+	Path "models/props"
+	Model 0 "items/clip.iqm"
+	Skin 0 "items/clip.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex AMCL A 0 0
+}
+Model REClipBoxPickup
+{
+	Path "models/props"
+	Model 0 "items/clip.iqm"
+	Skin 0 "items/clip.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex AMCL A 0 0
+}
+Model REChaingunClipPickup
+{
+	Path "models/props"
+	Model 0 "items/clip.iqm"
+	Skin 0 "items/clip.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex AMCL A 0 0
+}
+Model REShellsPickup
+{
+	Path "models/props"
+	Model 0 "items/shells.iqm"
+	Skin 0 "items/shells.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex AMSH A 0 0
+}
+Model REShellBoxPickup
+{
+	Path "models/props"
+	Model 0 "items/shells.iqm"
+	Skin 0 "items/shells.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex AMSH A 0 0
+}
+Model REMagnumRoundsPickup
+{
+	Path "models/props"
+	Model 0 "items/magnum.iqm"
+	Skin 0 "items/magnum.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex AMMG A 0 0
+}
+Model REExplosiveRoundsPickup
+{
+	Path "models/props"
+	Model 0 "items/explosive.iqm"
+	Skin 0 "items/explosive.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex AMEX A 0 0
+}
+Model REExplosiveBoxPickup
+{
+	Path "models/props"
+	Model 0 "items/explosive.iqm"
+	Skin 0 "items/explosive.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex AMEX A 0 0
+}
+Model REAcidRoundsPickup
+{
+	Path "models/props"
+	Model 0 "items/acid.iqm"
+	Skin 0 "items/acid.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex AMAC A 0 0
+}
+Model REFlameRoundsPickup
+{
+	Path "models/props"
+	Model 0 "items/flame.iqm"
+	Skin 0 "items/flame.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex AMFL A 0 0
+}
+
+// Doom's keys and power-ups as RE1 items (RE_DoomKeys.zs), and the First Aid Spray:
+// RE1's own item models (re1convert items). Their sprites are invisible placeholders.
+Model REFirstAidSprayPickup
+{
+	Path "models/props"
+	Model 0 "items/spray.iqm"
+	Skin 0 "items/spray.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RSPR A 0 0
+}
+Model REMegaspherePickup
+{
+	Path "models/props"
+	Model 0 "items/spray.iqm"
+	Skin 0 "items/spray.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RSPR A 0 0
+}
+Model REChemicalPickup
+{
+	Path "models/props"
+	Model 0 "items/chemical.iqm"
+	Skin 0 "items/chemical.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RCHM A 0 0
+}
+Model RELighterPickup
+{
+	Path "models/props"
+	Model 0 "items/lighter.iqm"
+	Skin 0 "items/lighter.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RLTR A 0 0
+}
+Model REMapPickup
+{
+	Path "models/props"
+	Model 0 "items/map.iqm"
+	Skin 0 "items/map.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RMAP A 0 0
+}
+Model REArmorKey
+{
+	Path "models/props"
+	Model 0 "items/key_armor.iqm"
+	Skin 0 "items/key_armor.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RKAR A 0 0
+}
+Model RESwordKey
+{
+	Path "models/props"
+	Model 0 "items/key_sword.iqm"
+	Skin 0 "items/key_sword.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RKSW A 0 0
+}
+Model REShieldKey
+{
+	Path "models/props"
+	Model 0 "items/key_shield.iqm"
+	Skin 0 "items/key_shield.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RKSH A 0 0
+}
+Model REHelmetKey
+{
+	Path "models/props"
+	Model 0 "items/key_helmet.iqm"
+	Skin 0 "items/key_helmet.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RKHE A 0 0
+}
+Model REStarCrest
+{
+	Path "models/props"
+	Model 0 "items/crest_star.iqm"
+	Skin 0 "items/crest_star.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RCST A 0 0
+}
+Model RESunCrest
+{
+	Path "models/props"
+	Model 0 "items/crest_sun.iqm"
+	Skin 0 "items/crest_sun.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RCSU A 0 0
+}
+
+// Chris's flamethrower on the floor: RE1's own item model (re1convert items). Sprite RFTH is an invisible placeholder.
+Model REFlamethrowerPickup
+{
+	Path "models/props"
+	Model 0 "items/flamethrower.iqm"
+	Skin 0 "items/flamethrower.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RFTH A 0 0
+}
+
+// The item box: RE1's own lid on a matching body (tools\re1convert\re1convert.exe
+// itembox "<RE1 USA>" mod\models\props). Frame 0 closed, 1-11 the lid opening
+// (zscript/RE_ItemBox.zs). Its IBOX sprites are invisible placeholders.
+Model REItemBoxActor
+{
+	Path "models/props"
+	Model 0 "itembox.md3"
+	Skin 0 "itembox.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex IBOX A 0 0
+	FrameIndex IBOX B 0 1
+	FrameIndex IBOX C 0 2
+	FrameIndex IBOX D 0 3
+	FrameIndex IBOX E 0 4
+	FrameIndex IBOX F 0 5
+	FrameIndex IBOX G 0 6
+	FrameIndex IBOX H 0 7
+	FrameIndex IBOX I 0 8
+	FrameIndex IBOX J 0 9
+	FrameIndex IBOX K 0 10
+	FrameIndex IBOX L 0 11
+}
+
+
+// REKnifePickup: RE1's own weapon item model (re1convert items). Sprite RWKN is an invisible placeholder.
+Model REKnifePickup
+{
+	Path "models/props"
+	Model 0 "items/w_knife.iqm"
+	Skin 0 "items/w_knife.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RWKN A 0 0
+}
+
+// REBerettaPickup: RE1's own weapon item model (re1convert items). Sprite RWBE is an invisible placeholder.
+Model REBerettaPickup
+{
+	Path "models/props"
+	Model 0 "items/w_beretta.iqm"
+	Skin 0 "items/w_beretta.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RWBE A 0 0
+}
+
+// REShotgunPickup: RE1's own weapon item model (re1convert items). Sprite RWSG is an invisible placeholder.
+Model REShotgunPickup
+{
+	Path "models/props"
+	Model 0 "items/w_shotgun.iqm"
+	Skin 0 "items/w_shotgun.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RWSG A 0 0
+}
+
+// REPythonPickup: RE1's own weapon item model (re1convert items). Sprite RWPY is an invisible placeholder.
+Model REPythonPickup
+{
+	Path "models/props"
+	Model 0 "items/w_python.iqm"
+	Skin 0 "items/w_python.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RWPY A 0 0
+}
+
+// REBazookaPickup: RE1's own weapon item model (re1convert items). Sprite RWBZ is an invisible placeholder.
+Model REBazookaPickup
+{
+	Path "models/props"
+	Model 0 "items/w_bazooka.iqm"
+	Skin 0 "items/w_bazooka.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RWBZ A 0 0
+}
+
+// REBazookaAcidPickup: RE1's own weapon item model (re1convert items). Sprite RWBA is an invisible placeholder.
+Model REBazookaAcidPickup
+{
+	Path "models/props"
+	Model 0 "items/w_bazooka.iqm"
+	Skin 0 "items/w_bazooka.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RWBA A 0 0
+}
+
+// RERocketLauncherPickup: RE1's own weapon item model (re1convert items). Sprite RWRL is an invisible placeholder.
+Model RERocketLauncherPickup
+{
+	Path "models/props"
+	Model 0 "items/w_rocket.iqm"
+	Skin 0 "items/w_rocket.png"
+	Scale 1.0 1.0 1.0
+	FrameIndex RWRL A 0 0
+}

@@ -1,0 +1,447 @@
+// Tells GZDoom which player, HUD and scripts to use, and what the maps are.
+
+gameinfo
+{
+	PlayerClasses = "RETankPlayer", "REChrisPlayer"   // Jill, Chris (character select: RE_CharSelect.zs)
+	StatusBarClass = "REStatusBar"
+	AddEventHandlers = "REContinueHandler", "RECameraHandler", "REGameHandler", "RELightingHandler", "REInputBridge", "REViewHandler",
+		"REItemBoxHandler", "REDoomItemHandler", "RECheatsHandler", "REFinalBossHandler", "REAllWeaponsHandler", "RETypewriterHandler", "RESaveState", "REMidTypewriterHandler", "REPartnerHandler", "RETitleHandler", "RECheatCodeHandler", "REBalanceHandler", "RESecretVestHandler", "REPoisonHandler", "REMapKeyHandler", "RERecordRun", "RERecordStats", "REFovHandler", "REStartLayoutHandler", "RECastHandler", "REClassicData", "RECorpseHandler"
+	statscreen_single = "REStatusScreen"
+	// Title screen (mod/hires/TITLEPIC.png): stay on it instead of moving on
+	// to Doom II's demos, which don't play back with tank controls.
+	TitleTime = 100000
+	// Quitting: one plain question (language.txt REQUITMSG) instead of Doom's
+	// joke lines, and no red ENDOOM text screen afterwards (no such lump).
+	QuitMessages = "$REQUITMSG"
+	Endoom = "RENOENDO"
+	// Every yes/no question box gets a dark layer behind it (RE_Title.zs).
+	MessageBoxClass = "REMessageBox"
+}
+
+// Numbers used for our things inside the map file (TEXTMAP "type = ...").
+DoomEdNums
+{
+	20003 = RERedHerb
+	20004 = REGreenHerb
+	20005 = REBlueHerb
+	20011 = REClipPickup
+	20041 = REFirstAidSprayPickup
+	20100 = REZombie
+}
+
+// Our hand-made RE1-style map. Doom II's own maps (MAP01 onward) keep their
+// normal episode; on those, the fixed cameras are placed automatically
+// (AutoCamera.zs).
+episode REMAP01
+{
+	name = "Mansion - (custom level)"
+	key = "r"
+}
+
+map REMAP01 "Mansion - West Wing"
+{
+	levelnum = 99
+	sky1 = "SKY1"
+	nointermission
+}
+
+// --- The ending cast call (RE_Cast.zs) -----------------------------------------
+// Doom II's Inter_Cast and Doom2Cast (GZDoom's mapinfo/common.txt), copied with
+// every monster unchanged; only the hero at the end is ours. Each list loops back
+// to its first monster, like Doom II's. MAP30 is pointed at one of them when the
+// Icon of Sin dies (RE_Cast.zs), through the map entries below that are never
+// played: GZDoom only knows an ending by the map that leads to it.
+
+Intermission RE_EndJill
+{
+	Image
+	{
+		Background = "$bgcastcall"
+		Time = -1
+		Music = "$MUSIC_EVIL"
+	}
+	Link = RE_CastJill
+}
+
+Intermission RE_CastJill
+{
+
+	Cast
+	{
+		CastClass = "Zombieman"
+		CastName = "$CC_ZOMBIE"
+		AttackSound = "Missile", 1, "grunt/attack"
+	}
+	Cast
+	{
+		CastClass = "ShotgunGuy"
+		CastName = "$CC_SHOTGUN"
+		AttackSound = "Missile", 1, "shotguy/attack"
+	}
+	Cast
+	{
+		CastClass = "ChaingunGuy"
+		CastName = "$CC_HEAVY"
+		AttackSound = "Missile", 1, "chainguy/attack"
+		AttackSound = "Missile", 2, "chainguy/attack"
+		AttackSound = "Missile", 3, "chainguy/attack"
+	}
+	Cast
+	{
+		CastClass = "DoomImp"
+		CastName = "$CC_IMP"
+		AttackSound = "Missile", 2, "imp/attack"
+	}
+	Cast
+	{
+		CastClass = "Demon"
+		CastName = "$CC_DEMON"
+		AttackSound = "Melee", 1, "demon/melee"
+	}
+	Cast
+	{
+		CastClass = "LostSoul"
+		CastName = "$CC_LOST"
+		AttackSound = "Missile", 1, "skull/melee"
+	}
+	Cast
+	{
+		CastClass = "Cacodemon"
+		CastName = "$CC_CACO"
+		AttackSound = "Missile", 1, "caco/attack"
+	}
+	Cast
+	{
+		CastClass = "HellKnight"
+		CastName = "$CC_HELL"
+		AttackSound = "Missile", 1, "baron/attack"
+	}
+	Cast
+	{
+		CastClass = "BaronOfHell"
+		CastName = "$CC_BARON"
+		AttackSound = "Missile", 1, "baron/attack"
+	}
+	Cast
+	{
+		CastClass = "Arachnotron"
+		CastName = "$CC_ARACH"
+		AttackSound = "Missile", 1, "baby/attack"
+	}
+	Cast
+	{
+		CastClass = "PainElemental"
+		CastName = "$CC_PAIN"
+		AttackSound = "Missile", 2, "skull/melee"
+	}
+	Cast
+	{
+		CastClass = "Revenant"
+		CastName = "$CC_REVEN"
+		AttackSound = "Missile", 1, "skeleton/attack"
+		AttackSound = "Melee", 1, "skeleton/swing"
+		AttackSound = "Melee", 3, "skeleton/melee"
+	}
+	Cast
+	{
+		CastClass = "Fatso"
+		CastName = "$CC_MANCU"
+		AttackSound = "Missile", 1, "fatso/attack"
+		AttackSound = "Missile", 4, "fatso/attack"
+		AttackSound = "Missile", 7, "fatso/attack"
+	}
+	Cast
+	{
+		CastClass = "Archvile"
+		CastName = "$CC_ARCH"
+		AttackSound = "Missile", 1, "vile/start"
+	}
+	Cast
+	{
+		CastClass = "SpiderMastermind"
+		CastName = "$CC_SPIDER"
+		AttackSound = "Missile", 1, "spider/attack"
+		AttackSound = "Missile", 2, "spider/attack"
+	}
+	Cast
+	{
+		CastClass = "Cyberdemon"
+		CastName = "$CC_CYBER"
+		AttackSound = "Missile", 1, "weapons/rocklf"
+		AttackSound = "Missile", 3, "weapons/rocklf"
+		AttackSound = "Missile", 5, "weapons/rocklf"
+	}
+	Cast
+	{
+		CastClass = "RECastJill"
+		CastName = "JILL VALENTINE"
+		AttackSound = "Missile", 5, "re1/beretta"
+	}
+	Link = RE_CastJill	// restart cast call
+}
+
+Intermission RE_EndChris
+{
+	Image
+	{
+		Background = "$bgcastcall"
+		Time = -1
+		Music = "$MUSIC_EVIL"
+	}
+	Link = RE_CastChris
+}
+
+Intermission RE_CastChris
+{
+
+	Cast
+	{
+		CastClass = "Zombieman"
+		CastName = "$CC_ZOMBIE"
+		AttackSound = "Missile", 1, "grunt/attack"
+	}
+	Cast
+	{
+		CastClass = "ShotgunGuy"
+		CastName = "$CC_SHOTGUN"
+		AttackSound = "Missile", 1, "shotguy/attack"
+	}
+	Cast
+	{
+		CastClass = "ChaingunGuy"
+		CastName = "$CC_HEAVY"
+		AttackSound = "Missile", 1, "chainguy/attack"
+		AttackSound = "Missile", 2, "chainguy/attack"
+		AttackSound = "Missile", 3, "chainguy/attack"
+	}
+	Cast
+	{
+		CastClass = "DoomImp"
+		CastName = "$CC_IMP"
+		AttackSound = "Missile", 2, "imp/attack"
+	}
+	Cast
+	{
+		CastClass = "Demon"
+		CastName = "$CC_DEMON"
+		AttackSound = "Melee", 1, "demon/melee"
+	}
+	Cast
+	{
+		CastClass = "LostSoul"
+		CastName = "$CC_LOST"
+		AttackSound = "Missile", 1, "skull/melee"
+	}
+	Cast
+	{
+		CastClass = "Cacodemon"
+		CastName = "$CC_CACO"
+		AttackSound = "Missile", 1, "caco/attack"
+	}
+	Cast
+	{
+		CastClass = "HellKnight"
+		CastName = "$CC_HELL"
+		AttackSound = "Missile", 1, "baron/attack"
+	}
+	Cast
+	{
+		CastClass = "BaronOfHell"
+		CastName = "$CC_BARON"
+		AttackSound = "Missile", 1, "baron/attack"
+	}
+	Cast
+	{
+		CastClass = "Arachnotron"
+		CastName = "$CC_ARACH"
+		AttackSound = "Missile", 1, "baby/attack"
+	}
+	Cast
+	{
+		CastClass = "PainElemental"
+		CastName = "$CC_PAIN"
+		AttackSound = "Missile", 2, "skull/melee"
+	}
+	Cast
+	{
+		CastClass = "Revenant"
+		CastName = "$CC_REVEN"
+		AttackSound = "Missile", 1, "skeleton/attack"
+		AttackSound = "Melee", 1, "skeleton/swing"
+		AttackSound = "Melee", 3, "skeleton/melee"
+	}
+	Cast
+	{
+		CastClass = "Fatso"
+		CastName = "$CC_MANCU"
+		AttackSound = "Missile", 1, "fatso/attack"
+		AttackSound = "Missile", 4, "fatso/attack"
+		AttackSound = "Missile", 7, "fatso/attack"
+	}
+	Cast
+	{
+		CastClass = "Archvile"
+		CastName = "$CC_ARCH"
+		AttackSound = "Missile", 1, "vile/start"
+	}
+	Cast
+	{
+		CastClass = "SpiderMastermind"
+		CastName = "$CC_SPIDER"
+		AttackSound = "Missile", 1, "spider/attack"
+		AttackSound = "Missile", 2, "spider/attack"
+	}
+	Cast
+	{
+		CastClass = "Cyberdemon"
+		CastName = "$CC_CYBER"
+		AttackSound = "Missile", 1, "weapons/rocklf"
+		AttackSound = "Missile", 3, "weapons/rocklf"
+		AttackSound = "Missile", 5, "weapons/rocklf"
+	}
+	Cast
+	{
+		CastClass = "RECastChris"
+		CastName = "CHRIS REDFIELD"
+		AttackSound = "Missile", 5, "re1/beretta"
+	}
+	Link = RE_CastChris	// restart cast call
+}
+
+Intermission RE_EndBoth
+{
+	Image
+	{
+		Background = "$bgcastcall"
+		Time = -1
+		Music = "$MUSIC_EVIL"
+	}
+	Link = RE_CastBoth
+}
+
+Intermission RE_CastBoth
+{
+
+	Cast
+	{
+		CastClass = "Zombieman"
+		CastName = "$CC_ZOMBIE"
+		AttackSound = "Missile", 1, "grunt/attack"
+	}
+	Cast
+	{
+		CastClass = "ShotgunGuy"
+		CastName = "$CC_SHOTGUN"
+		AttackSound = "Missile", 1, "shotguy/attack"
+	}
+	Cast
+	{
+		CastClass = "ChaingunGuy"
+		CastName = "$CC_HEAVY"
+		AttackSound = "Missile", 1, "chainguy/attack"
+		AttackSound = "Missile", 2, "chainguy/attack"
+		AttackSound = "Missile", 3, "chainguy/attack"
+	}
+	Cast
+	{
+		CastClass = "DoomImp"
+		CastName = "$CC_IMP"
+		AttackSound = "Missile", 2, "imp/attack"
+	}
+	Cast
+	{
+		CastClass = "Demon"
+		CastName = "$CC_DEMON"
+		AttackSound = "Melee", 1, "demon/melee"
+	}
+	Cast
+	{
+		CastClass = "LostSoul"
+		CastName = "$CC_LOST"
+		AttackSound = "Missile", 1, "skull/melee"
+	}
+	Cast
+	{
+		CastClass = "Cacodemon"
+		CastName = "$CC_CACO"
+		AttackSound = "Missile", 1, "caco/attack"
+	}
+	Cast
+	{
+		CastClass = "HellKnight"
+		CastName = "$CC_HELL"
+		AttackSound = "Missile", 1, "baron/attack"
+	}
+	Cast
+	{
+		CastClass = "BaronOfHell"
+		CastName = "$CC_BARON"
+		AttackSound = "Missile", 1, "baron/attack"
+	}
+	Cast
+	{
+		CastClass = "Arachnotron"
+		CastName = "$CC_ARACH"
+		AttackSound = "Missile", 1, "baby/attack"
+	}
+	Cast
+	{
+		CastClass = "PainElemental"
+		CastName = "$CC_PAIN"
+		AttackSound = "Missile", 2, "skull/melee"
+	}
+	Cast
+	{
+		CastClass = "Revenant"
+		CastName = "$CC_REVEN"
+		AttackSound = "Missile", 1, "skeleton/attack"
+		AttackSound = "Melee", 1, "skeleton/swing"
+		AttackSound = "Melee", 3, "skeleton/melee"
+	}
+	Cast
+	{
+		CastClass = "Fatso"
+		CastName = "$CC_MANCU"
+		AttackSound = "Missile", 1, "fatso/attack"
+		AttackSound = "Missile", 4, "fatso/attack"
+		AttackSound = "Missile", 7, "fatso/attack"
+	}
+	Cast
+	{
+		CastClass = "Archvile"
+		CastName = "$CC_ARCH"
+		AttackSound = "Missile", 1, "vile/start"
+	}
+	Cast
+	{
+		CastClass = "SpiderMastermind"
+		CastName = "$CC_SPIDER"
+		AttackSound = "Missile", 1, "spider/attack"
+		AttackSound = "Missile", 2, "spider/attack"
+	}
+	Cast
+	{
+		CastClass = "Cyberdemon"
+		CastName = "$CC_CYBER"
+		AttackSound = "Missile", 1, "weapons/rocklf"
+		AttackSound = "Missile", 3, "weapons/rocklf"
+		AttackSound = "Missile", 5, "weapons/rocklf"
+	}
+	Cast
+	{
+		CastClass = "RECastChris"
+		CastName = "CHRIS REDFIELD"
+		AttackSound = "Missile", 5, "re1/beretta"
+	}
+	Cast
+	{
+		CastClass = "RECastJill"
+		CastName = "JILL VALENTINE"
+		AttackSound = "Missile", 5, "re1/beretta"
+	}
+	Link = RE_CastBoth	// restart cast call
+}
+
+map RE_CASTJ "Ending: Jill" { next = endsequence, "RE_EndJill" }
+map RE_CASTC "Ending: Chris" { next = endsequence, "RE_EndChris" }
+map RE_CASTB "Ending: Chris and Jill" { next = endsequence, "RE_EndBoth" }
