@@ -15,8 +15,9 @@
 #   -Force             build everything again, even what's already there
 #   -NoCapture         skip the Level Select pictures (plain cards are shown instead)
 #   -Yes               never ask (fail with a message instead); for scripted runs
+#   -Pictures          only take the Level Select pictures again (after a full setup)
 
-param([string]$RE1 = '', [string]$DoomWad = '', [string]$GZDoom = '', [switch]$Force, [switch]$NoCapture, [switch]$Yes)
+param([string]$RE1 = '', [string]$DoomWad = '', [string]$GZDoom = '', [switch]$Force, [switch]$NoCapture, [switch]$Yes, [switch]$Pictures)
 
 $ErrorActionPreference = 'Stop'
 $Game = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
@@ -114,6 +115,18 @@ function Ask-File($title) {
     return ''
 }
 
+$exe = Join-Path $Game 'tools\re1convert\re1convert.exe'
+$mod = Join-Path $Game 'mod'
+$gzExe = Join-Path $Game 'tools\gzdoom\gzdoom.exe'
+if ($Pictures) {
+    # -Pictures: only the Level Select pictures again (everything else is kept)
+    Step 'Taking only the Level Select pictures again'
+    foreach ($need in $exe, $gzExe, (Join-Path $Game 'iwad\doom2.wad'), (Join-Path $mod 'models\jill\jill_unarmed.iqm')) {
+        if (-not (Test-Path -LiteralPath $need)) { Fail 'Resident Doom isn''t fully set up yet: run setup.bat first (without -Pictures).' }
+    }
+    $Force = $true
+} else {
+
 Step 'Finding your game files'
 if (-not $RE1) { $RE1 = Find-RE1 }
 if (-not $RE1) {
@@ -208,6 +221,8 @@ if ($GZDoom) {
 $ini = Join-Path $gzDir 'gzdoom_portable.ini'
 if (-not (Test-Path -LiteralPath $ini)) { New-Item -ItemType File -Path $ini | Out-Null }
 
+}   # end of the full setup (skipped with -Pictures)
+
 # --- 6. Level Select pictures -----------------------------------------------
 $lvNames = @(1..32 | ForEach-Object { 'LV{0:00}' -f $_ }) + @('LVRE', 'LVBOSS')
 $haveLv = @($lvNames | Where-Object { Test-Path -LiteralPath (Join-Path $mod "graphics\$_.png") }).Count
@@ -230,8 +245,9 @@ if ($NoCapture) {
     $steps = @()
     foreach ($i in 1..32) { $steps += , @(('map MAP{0:00}' -f $i), ('LV{0:00}' -f $i)) }
     $steps += , @('map REMAP01', 'LVRE')
-    $steps += , @('re_bossfight', 'LVBOSS')
-    $ini = @('[Doom.ConsoleAliases]', 'Name=rdcap', 'Command=wait 70; rdcap0')
+    # the Final Boss picture: the same fixed view of the Icon of Sin on every computer
+    $steps += , @('map MAP30; wait 35; netevent re_capbossview', 'LVBOSS')
+    $ini = @('[Doom.ConsoleAliases]', 'Name=rdcap', 'Command=unbindall; wait 70; rdcap0')   # no keys during the capture
     for ($k = 0; $k -lt $steps.Count; $k++) {
         $ini += "Name=rdcap$k"
         $ini += ('Command={0}; wait 105; screenshot tools/setup/shots/{1}.png; wait 5; rdcap{2}' -f $steps[$k][0], $steps[$k][1], ($k + 1))
@@ -241,7 +257,8 @@ if ($NoCapture) {
     Set-Content -LiteralPath $capIni -Value $ini -Encoding ASCII
     $gzArgs = @('-config', "`"$capIni`"", '-iwad', 'iwad/doom2.wad', '-file', 'mod', '-nosound',
         '+vid_fullscreen', '0', '+win_w', '800', '+win_h', '500', '+re_start_view', '1', '+screenblocks', '12',
-        '+crosshair', '0', '+show_messages', '0', '+re_cheat_god', '1', '+rdcap')
+        '+crosshair', '0', '+show_messages', '0', '+re_cheat_god', '1',
+        '+use_mouse', '0', '+use_joystick', '0', '+i_pauseinbackground', '0', '+vid_activeinbackground', '1', '+rdcap')   # mouse stays free; keeps going in the background
     $proc = Start-Process -FilePath $gzExe -ArgumentList $gzArgs -WorkingDirectory $Game -PassThru
     if (-not $proc.WaitForExit(420000)) { try { $proc.Kill() } catch { }; Say 'GZDoom took too long; stopped it.' 'Yellow' }
     Remove-Item -LiteralPath $capIni -Force -ErrorAction SilentlyContinue

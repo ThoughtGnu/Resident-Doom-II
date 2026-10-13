@@ -17,8 +17,8 @@ if [ ! -x "$GZBIN" ] || [ ! -f "$GAME/iwad/doom2.wad" ] || [ ! -f "$GAME/mod/mod
     exit 1
 fi
 mkdir -p "$GZ_DIR/Save"
-# settings and saves stay in this folder (tools/gzdoom-mac), like on Windows
-"$GZBIN" -config "$GZ_DIR/gzdoom.ini" -savedir "$GZ_DIR/Save" -iwad "$GAME/iwad/doom2.wad" -file "$GAME/mod" \
-    +exec "$GAME/keys.cfg" "$@" >/dev/null 2>&1 &
-disown
+# settings and saves stay in this folder (tools/gzdoom-mac), like on Windows;
+# GZDoom starts as its own app (not from Terminal)
+open -n -a "$GZ_DIR/GZDoom.app" --args -config "$GZ_DIR/gzdoom.ini" -savedir "$GZ_DIR/Save" -iwad "$GAME/iwad/doom2.wad" -file "$GAME/mod" \
+    +exec "$GAME/keys.cfg" "$@"
 exit 0

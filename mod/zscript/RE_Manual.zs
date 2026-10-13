@@ -34,6 +34,7 @@ class REManualMenu : GenericMenu
 		"Up / Down|aim up / down (while aiming)",
 		"1-7, mouse wheel|switch weapons (All Weapons cheat only; 7 = flamethrower)",
 		"!Without the cheat, equip a weapon in the inventory.",
+		"!Mac: hold Control to aim and press E to fire. On a trackpad, a two-finger click also aims.",
 		"*",
 		"#ACTIONS",
 		"E|pick up, open doors, use typewriters and the item box",

@@ -37,6 +37,8 @@ Manual**. Turn pages there with Left / Right, or click the tabs and buttons.
 
 Without the cheat, equip a weapon in the inventory.
 
+**Mac:** hold Control to aim and press E to fire. On a trackpad, a two-finger click also aims.
+
 **Field of View:** Settings > Video > Field of View (first person, 75-120).
 
 **Actions**

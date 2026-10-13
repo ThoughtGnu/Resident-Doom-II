@@ -77,12 +77,15 @@ Mac. So the game files come from a Windows PC where they're installed:
    bash setup.command
    ```
 
-   It does the same as on Windows (pick the Resident Evil folder and doom2.wad
-   if it asks). It also downloads the .NET 8 SDK into the game folder to build
+   It does the same as on Windows. If it can't find the Resident Evil folder
+   or doom2.wad by itself, it asks you to drag them onto the Terminal window
+   (no pop-up windows, no permissions needed). It also downloads the .NET 8 SDK into the game folder to build
    the converter. If macOS asks whether GZDoom may use files in your Documents
    folder, click **OK**.
 5. To play: double-click **`play.command`** (the first time: right-click >
    **Open**), or type `bash play.command` in Terminal.
+
+**Mac: hold Control to aim and press E to fire. On a trackpad, a two-finger click also aims.**
 
 **No Windows PC?** You can try unpacking GOG's offline Windows installers
 (downloadable from your GOG library) with **innoextract**
@@ -172,6 +175,7 @@ Weapons), or console codes (~): `starsteam`, `rocketman`, `jillsandwich`,
 - Run setup again; it's safe. `setup.bat -Force` (or `bash setup.command --force`)
   rebuilds everything.
 - `setup.bat -NoCapture` skips the Level Select pictures (plain cards are shown instead).
+- `setup.bat -Pictures` (Mac: `bash setup.command --pictures`) takes only the Level Select pictures again.
 - Your settings and saves live in `tools\gzdoom` (Mac: `tools/gzdoom-mac`);
   setup never deletes them.
 

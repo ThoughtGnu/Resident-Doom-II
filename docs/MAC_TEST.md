@@ -29,7 +29,7 @@ From the USB stick / cloud folder, copy:
 - the three wads to a new folder `Documents/DOOM`
 
 (Setup looks in Documents, Desktop and Downloads by itself; if it doesn't find
-them, it asks you to pick them.)
+them, it asks you to drag them onto the Terminal window.)
 
 ## 4. Run setup
 
@@ -37,10 +37,12 @@ them, it asks you to pick them.)
 2. Type `cd ` (c, d, a space), drag the **Resident-Doom** folder from Finder onto
    the Terminal window, and press **Return**.
 3. Type `bash setup.command` and press **Return**.
-4. If a window asks you to pick the Resident Evil folder or doom2.wad, pick them.
+4. If setup asks for the Resident Evil folder or doom2.wad, drag it from Finder
+   onto the Terminal window and press **Return**.
 5. Setup downloads the .NET 8 SDK and GZDoom 4.14.2 into the game folder
    (about 250 MB), builds everything, then opens GZDoom for about 2 minutes to
-   take the Level Select pictures. **Leave it alone until it closes by itself.**
+   take the Level Select pictures. **Don't type in its window until it closes by itself**
+   (your mouse stays free).
    If macOS asks whether GZDoom may access files in your Documents folder,
    click **OK**.
 6. The last line should be: **Setup complete.**
@@ -75,3 +77,4 @@ them, it asks you to pick them.)
   avoids this. If it appears, open System Settings > Privacy & Security, scroll
   down and click **Open Anyway** for GZDoom.
 - Run setup again with `bash setup.command --force` to rebuild everything.
+- To take only the Level Select pictures again: `bash setup.command --pictures`.

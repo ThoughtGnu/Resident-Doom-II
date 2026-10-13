@@ -26,7 +26,14 @@ re1convert all   <Resident Evil folder> <doom2.wad> mod   build everything into 
 The Level Select pictures are screenshots that setup takes with GZDoom (a
 console alias chain of `map`, `wait 105`, `screenshot`, in `tools/setup/setup.ps1`
 and `setup.command`), cut to 320x200 by `re1convert levelshots`. Missing ones
-show a plain card (`RE_LevelSelect.zs` `Card`).
+show a plain card (`RE_LevelSelect.zs` `Card`). The capture runs with its own settings
+file (the alias chain lives in its `[Doom.ConsoleAliases]`, since aliases run at
+startup only from there), `unbindall` so no key does anything, `use_mouse 0` so
+the mouse isn't grabbed, and `i_pauseinbackground 0` so it keeps going behind
+other windows. The Final Boss picture uses `netevent re_capbossview`
+(`REFinalBossHandler`): the boss start's lift ride with its numbers fixed, so the
+view is the same on every computer. `setup.bat -Pictures` /
+`bash setup.command --pictures` takes only the pictures again.
 
 The converter has no outside libraries: its pictures are `tools/re1convert/Img.cs`
 (PNG write and read, scaling, a tiny pixel font for preview sheets), so the

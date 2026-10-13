@@ -9,6 +9,7 @@ rem
 rem  Options:  setup.bat -RE1 "<Resident Evil folder>" -DoomWad "<doom2.wad>"
 rem            setup.bat -Force        (build everything again)
 rem            setup.bat -NoCapture    (skip the Level Select pictures)
+rem            setup.bat -Pictures     (only take the Level Select pictures again)
 rem ==========================================================================
 cd /d "%~dp0"
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\setup\setup.ps1" %*

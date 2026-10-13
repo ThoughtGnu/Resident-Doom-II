@@ -319,8 +319,30 @@ class REFinalBossHandler : EventHandler
 		level.ExecuteSpecial(Floor_MoveToValue, pmo, null, false, tag, 64, int(abs(h)), h < 0);
 		Vector3 best = (lift.x, lift.y, h);		if (re_debugcams) Console.Printf("Final boss start at (%.0f, %.0f, %.0f)", best.x, best.y, best.z);
 	}
-}
 
+	// Setup's Level Select picture (LVBOSS, "netevent re_capbossview" on MAP30):
+	// the same view on every computer. It does what the Final Boss start does,
+	// with its numbers fixed instead of searched for: stand on the lift in the
+	// middle of the arena (2880, 832), face the Icon's brain, and raise the lift
+	// to 312 (where this start ends up), so its opening frames the Icon.
+	const CAP_LIFT_TOP = 312;
+
+	override void NetworkProcess(ConsoleEvent e)
+	{
+		if (!(e.Name ~== "re_capbossview") || e.Player < 0 || !playeringame[e.Player]) return;
+		let pmo = players[e.Player].mo;
+		if (pmo == null || !(level.MapName ~== "MAP30")) return;
+		let brain = Actor(ThinkerIterator.Create("BossBrain").Next());
+		Vector2 lift = (2880, 832);
+		Sector ls = level.PointInSector(lift);
+		pmo.SetOrigin((lift.x, lift.y, ls.floorplane.ZAtPoint(lift)), false);
+		pmo.Vel = (0, 0, 0);
+		pmo.Angle = brain != null ? pmo.AngleTo(brain) : 90;
+		pmo.Pitch = 0;
+		level.ExecuteSpecial(Floor_MoveToValue, pmo, null, false, ls.GetTag(0), 64, CAP_LIFT_TOP, 0);
+		Console.Printf("Resident Doom: Level Select picture view of the Icon of Sin");
+	}
+}
 // An invisible stand-in the size of the player, to test spots.
 class REBossProbe : Actor
 {

@@ -16,6 +16,7 @@
 #
 #  Options: --re1 <folder>  --doomwad <file>  --gzdoom <GZDoom.app>
 #           --force (build everything again)  --nocapture (no Level Select pictures)
+#           --pictures (only take the Level Select pictures again, after a full setup)
 #           --yes (never ask; for scripted runs)
 # ==========================================================================
 
@@ -24,7 +25,7 @@ cd "$GAME" || exit 1
 LOG="$GAME/setup-log.txt"
 exec > >(tee "$LOG") 2>&1
 
-RE1=""; WAD=""; GZAPP=""; FORCE=0; NOCAP=0; YES=0
+RE1=""; WAD=""; GZAPP=""; FORCE=0; NOCAP=0; YES=0; PICS=0
 while [ $# -gt 0 ]; do
     case "$1" in
         --re1|-RE1) RE1="$2"; shift ;;
@@ -33,6 +34,7 @@ while [ $# -gt 0 ]; do
         --force|-Force) FORCE=1 ;;
         --nocapture|-NoCapture) NOCAP=1 ;;
         --yes|-Yes) YES=1 ;;
+        --pictures|-Pictures) PICS=1 ;;
         *) echo "Unknown option: $1" ;;
     esac
     shift
@@ -42,6 +44,7 @@ GZ_URL="https://github.com/ZDoom/gzdoom/releases/download/g4.14.2/gzdoom-4-14-2-
 GZ_SHA256="0f2e638574ce2a2b5adec3613cf3fc1c66f63468019d412bb8dc8787ee78fb05"
 GZ_DIR="$GAME/tools/gzdoom-mac"
 APP="$GZ_DIR/GZDoom.app"
+GZBIN="$APP/Contents/MacOS/gzdoom"
 DOTNET_DIR="$GAME/tools/dotnet"
 
 say()  { echo "$*"; }
@@ -56,6 +59,19 @@ fail() {
 say "Resident Doom setup"
 say "Game folder: $GAME"
 [ "$(uname)" = "Darwin" ] || say "Note: this script is made for macOS; on Windows use setup.bat."
+
+export DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1 DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1 DOTNET_ROOT="$DOTNET_DIR"
+DOTNET="$DOTNET_DIR/dotnet"
+CONV=("$DOTNET" "$GAME/tools/re1convert/bin-mac/re1convert.dll")
+
+if [ $PICS -eq 1 ]; then
+    # --pictures: only the Level Select pictures again (everything else is kept)
+    step "Taking only the Level Select pictures again"
+    [ -x "$GZBIN" ] && [ -f "$GAME/tools/re1convert/bin-mac/re1convert.dll" ] && [ -x "$DOTNET" ] \
+        && [ -f "$GAME/iwad/doom2.wad" ] && [ -f "$GAME/mod/models/jill/jill_unarmed.iqm" ] \
+        || fail "Resident Doom isn't fully set up yet: run bash setup.command first (without --pictures)."
+    FORCE=1
+else
 
 # --- 1. find the game files ------------------------------------------------
 is_re1() {
@@ -79,21 +95,22 @@ find_wad() {
     find "$HOME/Documents" "$HOME/Desktop" "$HOME/Downloads" "$HOME/Games" -maxdepth 4 -iname 'doom2.wad' 2>/dev/null | head -n 1
 }
 
-ask_folder() {
+# Asks in this Terminal window: drag the folder or file onto it and press Return.
+# (No pop-up dialogs, so macOS never asks for any permission.)
+ask_path() {
     [ $YES -eq 1 ] && return
-    osascript -e "POSIX path of (choose folder with prompt \"$1\")" 2>/dev/null | sed 's:/$::'
-}
-
-ask_file() {
-    [ $YES -eq 1 ] && return
-    osascript -e "POSIX path of (choose file with prompt \"$1\")" 2>/dev/null
+    printf '%s\n> ' "$1" > /dev/tty
+    local p
+    IFS= read -r p < /dev/tty
+    p="$(printf '%s' "$p" | sed -e 's/[[:space:]]*$//' -e "s/^'//" -e "s/'$//" -e 's/^"//' -e 's/"$//' -e 's/\\\(.\)/\1/g')"
+    echo "${p%/}"
 }
 
 step "Finding your game files"
 [ -z "$RE1" ] && RE1="$(find_re1)"
 if [ -z "$RE1" ]; then
     say "Resident Evil was not found. Please pick the Resident Evil folder you copied from your Windows PC (it has ResidentEvil.exe and a USA folder in it)."
-    RE1="$(ask_folder 'Pick the Resident Evil folder (it contains ResidentEvil.exe and USA)')"
+    RE1="$(ask_path 'Drag the Resident Evil folder (with ResidentEvil.exe and USA in it) onto this window, then press Return:')"
 fi
 [ -n "$RE1" ] || fail "No Resident Evil folder. RE1 can't be installed on a Mac: copy the whole Resident Evil folder from a Windows PC with GOG's Resident Evil (see README), then run setup again."
 is_re1 "$RE1" || fail "This isn't the Resident Evil folder: $RE1. Pick the folder that contains ResidentEvil.exe and a USA folder."
@@ -103,7 +120,7 @@ say "Resident Evil: $RE1"
 [ -z "$WAD" ] && WAD="$(find_wad)"
 if [ -z "$WAD" ]; then
     say "doom2.wad was not found. Please pick it (copied from your GOG or Steam DOOM II)."
-    WAD="$(ask_file 'Pick your doom2.wad')"
+    WAD="$(ask_path 'Drag your doom2.wad onto this window, then press Return:')"
 fi
 [ -n "$WAD" ] || fail "No doom2.wad. Copy doom2.wad from your GOG or Steam DOOM II (or DOOM + DOOM II) to this Mac, then run setup again."
 [ -f "$WAD" ] || fail "doom2.wad not found: $WAD"
@@ -111,8 +128,6 @@ say "DOOM II: $WAD"
 
 # --- 2. the .NET 8 SDK and the converter -----------------------------------
 step "Getting the .NET 8 SDK (to build the converter)"
-export DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1 DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1 DOTNET_ROOT="$DOTNET_DIR"
-DOTNET="$DOTNET_DIR/dotnet"
 if [ -x "$DOTNET" ] && "$DOTNET" --list-sdks 2>/dev/null | grep -q '^8\.'; then
     say ".NET 8 SDK is already there."
 else
@@ -126,7 +141,6 @@ fi
 step "Building the converter"
 "$DOTNET" build "$GAME/tools/re1convert/re1convert.csproj" -c Release -o "$GAME/tools/re1convert/bin-mac" -nologo -v quiet \
     || fail "The converter did not build (see the messages above)."
-CONV=("$DOTNET" "$GAME/tools/re1convert/bin-mac/re1convert.dll")
 say "Converter built."
 
 step "Checking your game files"
@@ -174,10 +188,11 @@ else
     say "GZDoom 4.14.2 downloaded and checked."
 fi
 xattr -dr com.apple.quarantine "$APP" 2>/dev/null
-GZBIN="$APP/Contents/MacOS/gzdoom"
 [ -x "$GZBIN" ] || fail "GZDoom is missing its program file ($GZBIN). Run setup again with --force."
 mkdir -p "$GZ_DIR/Save"
 touch "$GZ_DIR/gzdoom.ini"
+
+fi   # end of the full setup (skipped with --pictures)
 
 # --- 5. Level Select pictures -----------------------------------------------
 LV="LVRE LVBOSS"; for i in $(seq -w 1 32); do LV="$LV LV$i"; done
@@ -189,35 +204,40 @@ elif [ $FORCE -eq 0 ] && [ $have -eq $total ]; then
     step "Level Select pictures"; say "Already there."
 else
     step "Taking the Level Select pictures"
-    say "GZDoom opens and visits the start of every map (about 2 minutes). Please leave it alone until it closes by itself."
+    say "GZDoom opens and visits the start of every map (about 2 minutes) and closes by itself."
+    say "Please don't type in its window. Your mouse stays free (GZDoom doesn't grab it)."
     say "(If macOS asks whether GZDoom may use files in this folder, click OK.)"
     SHOTS="$GAME/tools/setup/shots"
     rm -rf "$SHOTS"; mkdir -p "$SHOTS"
     # GZDoom's "wait" only works inside a chain of console commands, an alias can't
     # be very long, and aliases run at startup only if they're already in the
     # settings file. So the capture gets its own settings file holding one short
-    # alias per map, each calling the next, started with +rdcap.
+    # alias per map, each calling the next, started with +rdcap. Screenshots go
+    # to full paths (GZDoom started as its own app doesn't run in this folder).
+    # unbindall: no key does anything during the capture.
     CAPINI="$GAME/tools/setup/capture.ini"
-    { echo '[Doom.ConsoleAliases]'; echo 'Name=rdcap'; echo 'Command=wait 70; rdcap0'
+    { echo '[Doom.ConsoleAliases]'; echo 'Name=rdcap'; echo 'Command=unbindall; wait 70; rdcap0'
       k=0
       for i in $(seq -w 1 32); do
-          echo "Name=rdcap$k"; echo "Command=map MAP$i; wait 105; screenshot tools/setup/shots/LV$i.png; wait 5; rdcap$((k + 1))"; k=$((k + 1))
+          echo "Name=rdcap$k"; echo "Command=map MAP$i; wait 105; screenshot \"$SHOTS/LV$i.png\"; wait 5; rdcap$((k + 1))"; k=$((k + 1))
       done
-      echo "Name=rdcap$k"; echo "Command=map REMAP01; wait 105; screenshot tools/setup/shots/LVRE.png; wait 5; rdcap$((k + 1))"; k=$((k + 1))
-      echo "Name=rdcap$k"; echo "Command=re_bossfight; wait 105; screenshot tools/setup/shots/LVBOSS.png; wait 5; rdcap$((k + 1))"; k=$((k + 1))
+      echo "Name=rdcap$k"; echo "Command=map REMAP01; wait 105; screenshot \"$SHOTS/LVRE.png\"; wait 5; rdcap$((k + 1))"; k=$((k + 1))
+      # the Final Boss picture: the same fixed view of the Icon of Sin on every computer
+      echo "Name=rdcap$k"; echo "Command=map MAP30; wait 35; netevent re_capbossview; wait 105; screenshot \"$SHOTS/LVBOSS.png\"; wait 5; rdcap$((k + 1))"; k=$((k + 1))
       echo "Name=rdcap$k"; echo "Command=quit"
     } > "$CAPINI"
-    ( cd "$GAME" && "$GZBIN" -config "$CAPINI" -iwad "$GAME/iwad/doom2.wad" -file "$GAME/mod" -nosound \
+    # started as its own app (not from Terminal), mouse not grabbed, and it keeps
+    # going if its window is in the background
+    open -n -W -a "$APP" --args -config "$CAPINI" -iwad "$GAME/iwad/doom2.wad" -file "$GAME/mod" -nosound \
         +vid_fullscreen 0 +win_w 800 +win_h 500 +re_start_view 1 +screenblocks 12 +crosshair 0 +show_messages 0 \
-        +re_cheat_god 1 +rdcap ) &
+        +re_cheat_god 1 +use_mouse 0 +use_joystick 0 +i_pauseinbackground 0 +vid_activeinbackground 1 +rdcap &
     pid=$!
     for s in $(seq 1 420); do kill -0 $pid 2>/dev/null || break; sleep 1; done
-    kill -0 $pid 2>/dev/null && { kill $pid 2>/dev/null; say "GZDoom took too long; stopped it."; }
+    if kill -0 $pid 2>/dev/null; then
+        pkill -f "$GZBIN" 2>/dev/null; sleep 2; kill $pid 2>/dev/null
+        say "GZDoom took too long; stopped it."
+    fi
     rm -f "$CAPINI"
-    # GZDoom may save relative to its own folder instead of this one
-    for alt in "$APP/Contents/MacOS/tools/setup/shots" "$HOME/Documents/GZDoom/tools/setup/shots"; do
-        [ -d "$alt" ] && cp -f "$alt"/LV*.png "$SHOTS"/ 2>/dev/null && rm -rf "$alt"
-    done
     got=$(ls "$SHOTS"/LV*.png 2>/dev/null | wc -l | tr -d ' ')
     if [ "$got" -gt 0 ]; then "${CONV[@]}" levelshots "$SHOTS" "$GAME/mod" >/dev/null || say "The Level Select pictures could not be converted; Level Select shows plain cards."; fi
     if [ "$got" -lt $total ]; then say "Took $got of $total Level Select pictures; the rest show a plain card. (Run setup again with --force to retry.)"

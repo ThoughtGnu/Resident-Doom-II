@@ -40,6 +40,10 @@ class REMapMenu : GenericMenu
 	// back over the room fill.
 	Array<double> holeX, holeY;
 	Array<int> holeSector;
+	// the level they were made for: if the level changes while the screen is
+	// open (a console "map" command), they're made again for the new one
+	String builtMap;
+	int builtSectors;
 
 	override void Init(Menu parent)
 	{
@@ -55,6 +59,10 @@ class REMapMenu : GenericMenu
 
 	void BuildFills()
 	{
+		triX.Clear(); triY.Clear(); triSector.Clear();
+		holeX.Clear(); holeY.Clear(); holeSector.Clear();
+		builtMap = level.MapName;
+		builtSectors = level.Sectors.Size();
 		for (int s = 0; s < level.Sectors.Size(); s++)
 		{
 			Sector sec = level.Sectors[s];
@@ -195,8 +203,9 @@ class REMapMenu : GenericMenu
 		{
 			let sh = new("Shape2D");
 			int nv = 0;
-			for (int t = 0; t < ts.Size(); t++)
+			for (int t = 0; t < ts.Size() && t * 3 + 2 < tx.Size() && t * 3 + 2 < ty.Size(); t++)
 			{
+				if (ts[t] < 0 || ts[t] >= known.Size()) continue;   // never read past the end
 				int k = known[ts[t]];
 				if (k == 0) continue;
 				int want = holes ? 0 : (ts[t] == here ? 2 : (k == 2 ? 0 : 1));
@@ -258,6 +267,11 @@ class REMapMenu : GenericMenu
 		Screen.Dim(BACK, 1.0, 0, 0, sw, sh);
 		let pmo = players[consoleplayer].mo;
 		if (pmo == null) return;
+		if (!(builtMap ~== level.MapName) || builtSectors != level.Sectors.Size())
+		{
+			BuildFills();
+			if (!panned) center = pmo.pos.xy;
+		}
 		if (scale <= 0) scale = sh / 1600.0;            // about 1600 map units top to bottom
 		scale = clamp(scale, sh / 12000.0, sh / 200.0);
 		double unit = sh / 400.0;                          // the size of 1 unit on the 640x400 canvas
