@@ -51,7 +51,8 @@ from **your own copies** of the games.
 
    Nothing is installed on your PC, and your game folders are only read.
    Everything setup prints is also saved in `setup-log.txt`.
-4. **Double-click `play.bat`** to play.
+4. **Double-click `play.bat`** to play. A small menu opens: press **Enter**
+   to play (or pick online co-op, see [Online co-op](#online-co-op-2-players)).
 
 If Windows says "Windows protected your PC" for `setup.bat` or `play.bat`,
 click **More info** > **Run anyway** (that message appears for any downloaded
@@ -86,7 +87,8 @@ Mac. So the game files come from a Windows PC where they're installed:
    the converter. If macOS asks whether GZDoom may use files in your Documents
    folder, click **OK**.
 5. To play: double-click **`play.command`** (the first time: right-click >
-   **Open**), or type `bash play.command` in Terminal.
+   **Open**), or type `bash play.command` in Terminal. A small menu opens in
+   Terminal: press **Return** to play (or pick online co-op).
 
 The first time, macOS may ask to let GZDoom control your computer using
 accessibility features. Click **Deny**; the game doesn't need it. macOS
@@ -104,10 +106,9 @@ and may not work.
 
 | | |
 |---|---|
-| `play.bat` / `play.command` | the title screen. Press **Enter**, then **New Game**: pick Jill, Chris or Both (AI partner), then Doom II's levels or "Mansion - (custom level)". |
+| `play.bat` / `play.command` | a small menu: **1 Play** (or just Enter), **2 Host online co-op**, **3 Join online co-op**. Play opens the title screen: press **Enter**, then **New Game**: pick Jill, Chris or Both (AI partner), then Doom II's levels or "Mansion - (custom level)". |
 | `play_doom2.bat` / `.command` | straight into Doom II's MAP01, as Jill |
 | `play_mansion.bat` / `.command` | straight into the mansion map, as Jill |
-| `host_coop.bat` / `join_coop.bat` (`.command`) | online co-op for 2 players (see [Online co-op](#online-co-op-2-players)) |
 
 Add `+playerclass Chris` to start the last two as Chris (for example
 `play_doom2.bat +playerclass Chris`).
@@ -169,16 +170,17 @@ no AI partner online.
   Windows with Mac may slowly go out of step (see below).
 
 **To play:**
-1. The host double-clicks **`host_coop.bat`** (Mac: `host_coop.command`). It
-   prints the addresses your friend can use. If Windows Firewall asks about
-   GZDoom, click **Allow** (Private networks). GZDoom waits for your friend.
-   To start on another map: `host_coop.bat MAP07`.
-2. The friend double-clicks **`join_coop.bat`** (Mac: `join_coop.command`) and
-   types the host's address. The level starts for both.
+1. The host double-clicks **`play.bat`** (Mac: `play.command`), types **2**
+   (Host online co-op) and presses Enter, then Enter again for MAP01 (or types
+   another map, for example `MAP07`). It prints the addresses your friend can
+   use. If Windows Firewall asks about GZDoom, click **Allow** (Private
+   networks). GZDoom waits for your friend.
+2. The friend double-clicks **`play.bat`** (Mac: `play.command`), types **3**
+   (Join online co-op), then the host's address. The level starts for both.
 
 **Which address?**
-- **Same house, same Wi-Fi:** the host's local address, which `host_coop`
-  prints (looks like `192.168.1.20`).
+- **Same house, same Wi-Fi:** the host's local address, which the host's
+  menu prints (looks like `192.168.1.20`).
 - **Over the internet, easiest:** both install **Tailscale** (free, tailscale.com)
   and sign in to the same Tailscale network. The friend types the host's
   Tailscale address (looks like `100.64.0.5`). No router changes.
@@ -188,7 +190,7 @@ no AI partner online.
 
 **Good to know:**
 - **No saving online.** Typewriters and F6 say "No saving in online co-op".
-  Play a level from the start with `host_coop.bat MAPxx`.
+  The host can start any map from the beginning (Host, then type the map).
 - If you die, press Space or E: you come back at the level start with what you
   carried when you got there. Your friend plays on.
 - The game doesn't pause when one of you opens the inventory, map or menu.

@@ -45,7 +45,8 @@ in a few pixels).
 
 ## How to play
 
-* **`play.bat`**: opens at the Resident Doom title screen ("PRESS ENTER TO
+* **`play.bat`**: a small menu first (Enter or 1 = Play, 2 = host online co-op,
+  3 = join online co-op). Play opens at the Resident Doom title screen ("PRESS ENTER TO
   PLAY", with the credit lines under it). Only Enter opens the menu; other
   keys do nothing there, and Esc in the menu goes back to the title. New Game asks **Jill or Chris** (RE1's character-select desk, both
   drawn from their RE1 models), then Doom II's levels or "Mansion - (custom level)".
@@ -781,7 +782,6 @@ The sounds are RE1's, copied from your GOG folder into `mod/sounds/re1/`.
 | Path                          | What it is |
 |-------------------------------|------------|
 | `play.bat`, `play_doom2.bat`  | start the game (our mansion / Doom II's levels) |
-| `host_coop.bat`, `join_coop.bat` (`.command` on a Mac) | online co-op: host as Jill / join as Chris |
 | `keys.cfg`                    | the key setup both launchers load (edit to change keys) |
 | `MANUAL.md`, `mod/zscript/RE_Manual.zs` | the player manual, on GitHub and in the game (main menu > Extras > Manual) |
 | `iwad/`                       | copies of `doom2.wad` and `id24res.wad` from your GOG install |
@@ -971,7 +971,9 @@ GZDoom needs a picture for every frame a model replaces.
 
 ## Online co-op (netgames)
 
-`host_coop` / `join_coop` start GZDoom's own netgame: `-host 2 -port 5029
+`play.bat` / `play.command` show a small menu (Enter = Play, the title
+screen as before; options on the command line skip the menu). **2 Host** and
+**3 Join** start GZDoom's own netgame: `-host 2 -port 5029
 -netmode 1` (packet server) and `-join <address>:5029`. Both computers run the
 whole game tic by tic and exchange only key presses, so every decision in play
 code must come out the same on both. The rules the code follows:

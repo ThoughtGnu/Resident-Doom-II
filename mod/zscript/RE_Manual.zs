@@ -92,7 +92,7 @@ class REManualMenu : GenericMenu
 
 		"@1|Online co-op",
 		"#TWO PLAYERS, TWO COMPUTERS",
-		"The host starts host_coop (Jill), the friend starts join_coop (Chris) and types the host's address. README.md explains the addresses.",
+		"Both start play.bat (Mac: play.command). The host picks 2 Host online co-op (Jill); the friend picks 3 Join online co-op (Chris) and types the host's address. README.md explains the addresses.",
 		"",
 		"Both need the same Resident Doom, the same DOOM II (setup prints its file ID) and the same kind of computer (Windows with Windows, Mac with Mac).",
 		"*",

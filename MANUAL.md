@@ -103,9 +103,10 @@ Pick who you play; the other one follows you and fights.
   instead of turning to face you, so you can walk around them. First person
   only (default), both views, or Off for Doom's usual corpses.
 
-**Online co-op:** two players on two computers. The host starts `host_coop`
-and plays Jill; the friend starts `join_coop`, types the host's address and
-plays Chris (the README explains which address). Both need the same Resident
+**Online co-op:** two players on two computers. Both start `play.bat`
+(Mac: `play.command`). The host picks **2 Host online co-op** and plays Jill;
+the friend picks **3 Join online co-op**, types the host's address and plays
+Chris (the README explains which address). Both need the same Resident
 Doom, the same DOOM II (setup prints its file ID) and the same kind of computer
 (Windows with Windows, Mac with Mac).
 - Each player has their own camera, inventory, item box, health and herbs.
