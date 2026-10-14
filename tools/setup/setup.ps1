@@ -172,6 +172,11 @@ Copy-Item -LiteralPath $DoomWad (Join-Path $iwad 'doom2.wad') -Force
 $id24 = Join-Path (Split-Path -Parent $DoomWad) 'id24res.wad'
 if (Test-Path -LiteralPath $id24) { Copy-Item -LiteralPath $id24 (Join-Path $iwad 'id24res.wad') -Force }
 elseif (Test-Path -LiteralPath (Join-Path $iwad 'id24res.wad')) { Remove-Item -LiteralPath (Join-Path $iwad 'id24res.wad') -Force }
+# for online co-op: both players' DOOM II must be the same file
+$wadLen = (Get-Item -LiteralPath (Join-Path $iwad 'doom2.wad')).Length
+$wadKind = if ($wadLen -eq 14604584) { 'classic 1.9' } elseif ($wadLen -eq 14951361) { '2024 re-release' } else { 'other version' }
+$wadId = (Get-FileHash -LiteralPath (Join-Path $iwad 'doom2.wad') -Algorithm SHA256).Hash.Substring(0, 8)
+Say "Your DOOM II version: $wadKind (file ID $wadId). For online co-op, your friend's must match."
 
 # --- 4. rebuild everything -------------------------------------------------
 Step 'Building the models, pictures and sounds from your RE1 files'

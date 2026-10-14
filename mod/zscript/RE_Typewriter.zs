@@ -141,6 +141,7 @@ class RETypewriterHandler : EventHandler
 	{
 		if (e.Name ~== "re_typewriter")
 		{
+			if (REMain.Online()) { Menu.StartMessage("No saving in online co-op.\n\nPress a key.", 1); return; }
 			let st = RESaveState.Get();
 			if (st != null) st.ribbonsNow = e.Args[0];
 			Menu.SetMenu('RETypewriterMenu');
@@ -154,6 +155,7 @@ class RETypewriterHandler : EventHandler
 		if (e.Type != InputEvent.Type_KeyDown || gamestate != GS_LEVEL) return false;
 		String b = Bindings.GetBinding(e.KeyScan);
 		if (!(b ~== "quicksave") && !(b ~== "re_quicksave")) return false;
+		if (REMain.Online()) { Menu.StartMessage("No saving in online co-op.\n\nPress a key.", 1); return true; }
 		if (!RETypewriter.TypewriterOnly())
 		{
 			// Normal saves: F6 saves; count it for the map's record (RE_Records.zs).
@@ -312,6 +314,12 @@ class RESaveMenu : SaveMenu
 
 	override void Ticker()
 	{
+		if (REMain.Online())
+		{
+			Close();
+			Menu.StartMessage("No saving in online co-op.\n\nPress a key.", 1);
+			return;
+		}
 		if (blocked)
 		{
 			blocked = false;

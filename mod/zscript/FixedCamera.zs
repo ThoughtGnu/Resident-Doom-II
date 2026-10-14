@@ -115,26 +115,102 @@ class RECameraHandler : EventHandler
 	int rescues;    // how often the safety net was needed (should stay 0)
 	bool wasFirstPerson;
 
+	// Online co-op: every player has their own camera. The fields that follow
+	// one player (here and in AutoCamera.zs) are kept per player and swapped in
+	// (UsePlayer) around everything done for that player; the cameras' spots
+	// and switch zones are shared. With one player this is exactly the
+	// single-player camera.
+	int camPlayer;                        // whose camera the fields hold now (-1: nobody yet)
+	int startCamId;                       // the map's first camera (recams.txt "start")
+	bool builtCamTaken;                   // the automatic camera made at map start has an owner
+	bool pInit[MAXPLAYERS];
+	int pCurrentCam[MAXPLAYERS];
+	int pHiddenTics[MAXPLAYERS];
+	bool pWasFirstPerson[MAXPLAYERS];
+	REFixedCamera pAutoCam[MAXPLAYERS];
+	int pAutoCand[MAXPLAYERS];
+	int pAutoBlocked[MAXPLAYERS];
+	int pAutoNextCheck[MAXPLAYERS];
+	Vector3 pAutoLastPos[MAXPLAYERS];
+	bool pAutoClose[MAXPLAYERS];
+	bool pAutoOpenTried[MAXPLAYERS];
+	int pBossSpot[MAXPLAYERS];
+	int pBossNextCheck[MAXPLAYERS];
+	bool pAutoHold[MAXPLAYERS];
+	Vector3 pAutoHoldPos[MAXPLAYERS];
+	int pAutoChaseSide[MAXPLAYERS];
+
+	void UsePlayer(int pn)
+	{
+		if (pn < 0 || pn >= MAXPLAYERS) return;
+		if (pn == camPlayer && pInit[pn]) return;
+		if (camPlayer >= 0 && camPlayer < MAXPLAYERS) StoreCam(camPlayer);
+		camPlayer = pn;
+		if (pInit[pn]) { LoadCam(pn); return; }
+		// first time for this player on this map: the map-start state, and
+		// their own automatic camera
+		currentCam = startCamId; hiddenTics = 0; wasFirstPerson = false;
+		autoCand = -1; autoBlocked = 0; autoNextCheck = 0; autoLastPos = (0, 0, 0);
+		autoClose = false; autoOpenTried = false; bossSpot = 0; bossNextCheck = 0;
+		autoHold = false; autoHoldPos = (0, 0, 0); autoChaseSide = 0;
+		if (autoMode && builtCamTaken)
+		{
+			autoCam = REFixedCamera(Actor.Spawn("REFixedCamera", (0, 0, 0)));
+			if (autoCam != null) autoCam.CameraFOV = AUTO_FOV;
+		}
+		builtCamTaken = true;
+		StoreCam(pn);
+	}
+
+	void StoreCam(int pn)
+	{
+		pInit[pn] = true;
+		pCurrentCam[pn] = currentCam; pHiddenTics[pn] = hiddenTics; pWasFirstPerson[pn] = wasFirstPerson;
+		pAutoCam[pn] = autoCam; pAutoCand[pn] = autoCand; pAutoBlocked[pn] = autoBlocked;
+		pAutoNextCheck[pn] = autoNextCheck; pAutoLastPos[pn] = autoLastPos; pAutoClose[pn] = autoClose;
+		pAutoOpenTried[pn] = autoOpenTried; pBossSpot[pn] = bossSpot; pBossNextCheck[pn] = bossNextCheck;
+		pAutoHold[pn] = autoHold; pAutoHoldPos[pn] = autoHoldPos; pAutoChaseSide[pn] = autoChaseSide;
+	}
+
+	void LoadCam(int pn)
+	{
+		currentCam = pCurrentCam[pn]; hiddenTics = pHiddenTics[pn]; wasFirstPerson = pWasFirstPerson[pn];
+		autoCam = pAutoCam[pn]; autoCand = pAutoCand[pn]; autoBlocked = pAutoBlocked[pn];
+		autoNextCheck = pAutoNextCheck[pn]; autoLastPos = pAutoLastPos[pn]; autoClose = pAutoClose[pn];
+		autoOpenTried = pAutoOpenTried[pn]; bossSpot = pBossSpot[pn]; bossNextCheck = pBossNextCheck[pn];
+		autoHold = pAutoHold[pn]; autoHoldPos = pAutoHoldPos[pn]; autoChaseSide = pAutoChaseSide[pn];
+	}
+
+	// The view for the player whose camera this is.
+	void SetView(Actor cam)
+	{
+		if (cam == null || camPlayer < 0 || camPlayer >= MAXPLAYERS || !playeringame[camPlayer]) return;
+		if (players[camPlayer].camera != cam) players[camPlayer].camera = cam;
+	}
+
 	override void WorldLoaded(WorldEvent e)
 	{
 		if (e.IsSaveGame) return;   // cameras were saved along with the game
 		LoadCameraFile();
 		if (cameras.Size() == 0) BuildAutoCameras();   // AutoCamera.zs
+		startCamId = currentCam;
+		camPlayer = -1;
+		builtCamTaken = false;
+		for (int i = 0; i < MAXPLAYERS; i++) pInit[i] = false;
 	}
 
 	override void WorldTick()
 	{
-		PlayerPawn pmo = null;
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-			if (playeringame[i] && players[i].mo != null)
-			{
-				pmo = players[i].mo;
-				break;
-			}
+			if (!playeringame[i] || players[i].mo == null) continue;
+			UsePlayer(i);
+			TickPlayer(players[i].mo);
 		}
-		if (pmo == null) return;
+	}
 
+	void TickPlayer(PlayerPawn pmo)
+	{
 		// First-person view (V, RE_View.zs): look through Jill's eyes. When
 		// she switches back, pick the best fixed camera for where she is now.
 		let jill = RETankPlayer(pmo);
@@ -201,13 +277,7 @@ class RECameraHandler : EventHandler
 
 		let cam = FindCamera(currentCam);
 		if (cam == null) return;
-		for (int i = 0; i < MAXPLAYERS; i++)
-		{
-			if (playeringame[i] && players[i].camera != cam)
-			{
-				players[i].camera = cam;
-			}
-		}
+		SetView(cam);
 	}
 
 	void SwitchTo(int id)

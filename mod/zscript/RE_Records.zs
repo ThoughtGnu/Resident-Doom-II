@@ -75,9 +75,9 @@ class RERecordRun : EventHandler
 
 	void Finish()
 	{
-		if (finished) return;
+		if (finished || REMain.Online()) return;   // no records in online co-op
 		finished = true;
-		let pmo = players[consoleplayer].mo;
+		let pmo = REMain.Player();
 		let st = RERecordStats.Get();
 		if (pmo == null || st == null) return;
 

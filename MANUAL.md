@@ -103,6 +103,18 @@ Pick who you play; the other one follows you and fights.
   instead of turning to face you, so you can walk around them. First person
   only (default), both views, or Off for Doom's usual corpses.
 
+**Online co-op:** two players on two computers. The host starts `host_coop`
+and plays Jill; the friend starts `join_coop`, types the host's address and
+plays Chris (the README explains which address). Both need the same Resident
+Doom, the same DOOM II (setup prints its file ID) and the same kind of computer
+(Windows with Windows, Mac with Mac).
+- Each player has their own camera, inventory, item box, health and herbs.
+- **No saving online:** typewriters and F6 say so. If you die, press Space or
+  E to come back at the level start with what you had when you got there.
+- The game doesn't pause for the inventory, map or menu.
+- The host's settings apply to both. No AI partner, records or cheats online;
+  flat corpses set to "first person only" show in both views.
+
 ## Items
 
 ### Herbs, healing and poison

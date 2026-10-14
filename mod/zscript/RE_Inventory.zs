@@ -707,6 +707,28 @@ class REGameHandler : EventHandler
 			if (e.Name ~== "re_boxput") box.PutIn(inv, e.Args[0]);
 			else box.TakeOut(inv, e.Args[0]);
 		}
+		else if (e.Name ~== "re_synccheck")
+		{
+			// "netevent re_synccheck": a summary of the game that every computer in an
+			// online game prints the same way; different lines in two logs = out of step.
+			String s = String.Format("SYNC %s t=%d", level.MapName, level.maptime);
+			for (int p = 0; p < MAXPLAYERS; p++)
+			{
+				if (!playeringame[p] || players[p].mo == null) continue;
+				let m = players[p].mo;
+				s = s .. String.Format(" p%d=(%.2f,%.2f,%.2f a%.2f h%d s%d)", p, m.pos.x, m.pos.y, m.pos.z, m.Angle, m.health, REInventory(m.FindInventory("REInventory")) != null ? REInventory(m.FindInventory("REInventory")).numSlots : -1);
+			}
+			int mons = 0, hp = 0;
+			double sum = 0;
+			let it = ThinkerIterator.Create("Actor");
+			Actor a;
+			while ((a = Actor(it.Next())) != null)
+			{
+				if (!a.bIsMonster) continue;
+				mons++; hp += a.health; sum += a.pos.x + a.pos.y;
+			}
+			Console.Printf("%s monsters=%d hp=%d possum=%.2f", s, mons, hp, sum);
+		}
 		else if (e.Name ~== "re_debug")
 		{
 			// Type "netevent re_debug" in the console to print the player state.

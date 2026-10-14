@@ -150,6 +150,11 @@ mkdir -p "$GAME/iwad"
 cp -f "$WAD" "$GAME/iwad/doom2.wad" || fail "Could not copy doom2.wad into the game folder."
 ID24="$(find "$(dirname "$WAD")" -maxdepth 1 -iname 'id24res.wad' | head -n 1)"
 if [ -n "$ID24" ]; then cp -f "$ID24" "$GAME/iwad/id24res.wad"; else rm -f "$GAME/iwad/id24res.wad"; fi
+# for online co-op: both players' DOOM II must be the same file
+WADLEN="$(wc -c < "$GAME/iwad/doom2.wad" | tr -d ' ')"
+case "$WADLEN" in 14604584) WADKIND="classic 1.9" ;; 14951361) WADKIND="2024 re-release" ;; *) WADKIND="other version" ;; esac
+WADID="$(shasum -a 256 "$GAME/iwad/doom2.wad" | cut -c1-8 | tr a-f A-F)"
+say "Your DOOM II version: $WADKIND (file ID $WADID). For online co-op, your friend's must match."
 
 # --- 3. rebuild everything -------------------------------------------------
 step "Building the models, pictures and sounds from your RE1 files"

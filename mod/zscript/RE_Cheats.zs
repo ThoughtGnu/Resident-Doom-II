@@ -12,7 +12,7 @@ class RECheatsHandler : EventHandler
 
 	override void WorldTick()
 	{
-		bool want = re_cheat_god;
+		bool want = re_cheat_god && !REMain.Online();   // no cheats in online co-op
 		if (!want && !godSet) return;
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
@@ -35,7 +35,7 @@ class REAllWeaponsHandler : EventHandler
 
 	override void WorldTick()
 	{
-		bool on = re_cheat_weapons;
+		bool on = re_cheat_weapons && !REMain.Online();   // no cheats in online co-op
 		if (!on && !wasOn) return;
 		for (int p = 0; p < MAXPLAYERS; p++)
 		{
@@ -131,6 +131,7 @@ class RECheatCodeHandler : EventHandler
 	}
 	override void NetworkProcess(ConsoleEvent e)
 	{
+		if (REMain.Online() && (e.Name ~== "re_jillflamer" || e.Name ~== "re_cheatcode")) return;   // no cheats in online co-op
 		if (e.Name ~== "re_jillflamer") { JillFlamer(e.Player); return; }
 		if (!(e.Name ~== "re_cheatcode") || e.Player < 0 || !playeringame[e.Player]) return;
 		let pmo = players[e.Player].mo;

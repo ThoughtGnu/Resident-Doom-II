@@ -10,6 +10,10 @@ docs/MAC_TEST.md
 docs/RE1_NOTES.md
 docs/REPO_FILES.txt
 docs/secrets_per_map.md
+host_coop.bat
+host_coop.command
+join_coop.bat
+join_coop.command
 keys.cfg
 LICENSE
 MANUAL.md

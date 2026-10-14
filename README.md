@@ -107,6 +107,7 @@ and may not work.
 | `play.bat` / `play.command` | the title screen. Press **Enter**, then **New Game**: pick Jill, Chris or Both (AI partner), then Doom II's levels or "Mansion - (custom level)". |
 | `play_doom2.bat` / `.command` | straight into Doom II's MAP01, as Jill |
 | `play_mansion.bat` / `.command` | straight into the mansion map, as Jill |
+| `host_coop.bat` / `join_coop.bat` (`.command`) | online co-op for 2 players (see [Online co-op](#online-co-op-2-players)) |
 
 Add `+playerclass Chris` to start the last two as Chris (for example
 `play_doom2.bat +playerclass Chris`).
@@ -153,7 +154,52 @@ On the character select screen, **Both** gives you a partner: pick who you play,
 and the other one follows you and fights. They can't be hurt and never run out
 of ammo. They open normal doors, key doors while you carry the key, and secret
 doors you've found. Give them a better gun with **GIVE TO** in the inventory.
-(There's no online co-op: the partner is the computer.)
+
+### Online co-op (2 players)
+
+Two people, two computers: the **host** plays **Jill**, the friend who joins
+plays **Chris**. Each has their own camera, inventory, health and herbs. There's
+no AI partner online.
+
+**Before you start, both players need:**
+- the **same Resident Doom** (download it again if one of you has an older copy);
+- the **same DOOM II**. Setup prints `Your DOOM II version: ... (file ID ...)`;
+  compare the two lines (also in `setup-log.txt`). They must match;
+- **the same kind of computer:** Windows with Windows, or Mac with Mac.
+  Windows with Mac may slowly go out of step (see below).
+
+**To play:**
+1. The host double-clicks **`host_coop.bat`** (Mac: `host_coop.command`). It
+   prints the addresses your friend can use. If Windows Firewall asks about
+   GZDoom, click **Allow** (Private networks). GZDoom waits for your friend.
+   To start on another map: `host_coop.bat MAP07`.
+2. The friend double-clicks **`join_coop.bat`** (Mac: `join_coop.command`) and
+   types the host's address. The level starts for both.
+
+**Which address?**
+- **Same house, same Wi-Fi:** the host's local address, which `host_coop`
+  prints (looks like `192.168.1.20`).
+- **Over the internet, easiest:** both install **Tailscale** (free, tailscale.com)
+  and sign in to the same Tailscale network. The friend types the host's
+  Tailscale address (looks like `100.64.0.5`). No router changes.
+- **Over the internet, without Tailscale:** the host forwards **UDP port 5029**
+  on their router to their computer, and the friend types the host's public
+  address (search "what is my IP" on the host's computer).
+
+**Good to know:**
+- **No saving online.** Typewriters and F6 say "No saving in online co-op".
+  Play a level from the start with `host_coop.bat MAPxx`.
+- If you die, press Space or E: you come back at the level start with what you
+  carried when you got there. Your friend plays on.
+- The game doesn't pause when one of you opens the inventory, map or menu.
+- The **host's** settings (save mode, lighting, inventory style, starting view,
+  jump, crouch...) apply to both players.
+- Records, cheats and the custom ending are single player only.
+- **If it keeps waiting:** the host must start first; check the address; on
+  the internet, check Tailscale or the port forward; check the firewall.
+- **"Out of sync" or the players are in different places on the two screens:**
+  quit both and start again. If it happens with Windows + Mac, play Windows
+  with Windows or Mac with Mac.
 
 ### Cheats
 
@@ -170,7 +216,7 @@ Weapons), or console codes (~): `starsteam`, `rocketman`, `jillsandwich`,
   shows DOOM II's logo.
 - Doom II's monsters are still Doom's monsters (with RE1-style corpses and poison).
 - The mansion map has no exit yet (so no record for it).
-- Single player only; the "co-op" is the AI partner.
+- Online co-op is 2 players, without saving (see [Online co-op](#online-co-op-2-players)).
 - **Mac:** the game files must come from a Windows install (see above).
   CapsLock (always run) may behave differently, F6 may need the **fn** key,
   and on a trackpad, aim with a two-finger click or Ctrl.

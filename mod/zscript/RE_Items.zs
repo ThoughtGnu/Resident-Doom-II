@@ -453,7 +453,7 @@ class REKnifePickup : REWeaponPickup
 	{
 		if (bDestroyed || bDropped) return;   // a knife you dropped stays a knife
 		class<Actor> ammo = "REClipPickup";
-		let pmo = players[consoleplayer].mo;
+		let pmo = REMain.Player();
 		let inv = pmo != null ? REInventory(pmo.FindInventory("REInventory")) : null;
 		if (inv != null)
 		{
@@ -885,7 +885,7 @@ class REGun : REWeapon
 	// Only the Infinite Ammo cheat makes rounds and fuel last for ever. All
 	// Weapons' guns start full and are used up like any other
 	// (REInventory.cheatRounds keeps each one's rounds).
-	bool Bottomless() { return re_cheat_ammo; }
+	bool Bottomless() { return re_cheat_ammo && !REMain.Online(); }   // no cheats in online co-op
 
 	virtual int ShotDamage() { return damage; }
 	virtual Sound ShotSound() { return fireSound; }
@@ -1208,7 +1208,7 @@ class REFlamethrowerPickup : REPickup
 	bool Convert()
 	{
 		if (bDestroyed) return true;
-		let pmo = players[consoleplayer].mo;
+		let pmo = REMain.Player();
 		if (!bDropped && (pmo == null || pmo is "REChrisPlayer" || re_cheat_jillflame)) return false;
 		let clip = Actor.Spawn("REChaingunClipPickup", pos, ALLOW_REPLACE);
 		if (clip != null) { clip.bDropped = bDropped; clip.Angle = REPickup.FloorAngle(clip); }

@@ -286,7 +286,7 @@ class REFinalBossHandler : EventHandler
 		Actor brain = null;
 		let it = ThinkerIterator.Create("BossBrain");
 		brain = Actor(it.Next());
-		let pmo = players[consoleplayer].mo;
+		let pmo = REMain.Player();
 		if (brain == null || pmo == null) return;
 
 		// MAP30's own way to the brain is the lift in the middle of the

@@ -781,6 +781,7 @@ The sounds are RE1's, copied from your GOG folder into `mod/sounds/re1/`.
 | Path                          | What it is |
 |-------------------------------|------------|
 | `play.bat`, `play_doom2.bat`  | start the game (our mansion / Doom II's levels) |
+| `host_coop.bat`, `join_coop.bat` (`.command` on a Mac) | online co-op: host as Jill / join as Chris |
 | `keys.cfg`                    | the key setup both launchers load (edit to change keys) |
 | `MANUAL.md`, `mod/zscript/RE_Manual.zs` | the player manual, on GitHub and in the game (main menu > Extras > Manual) |
 | `iwad/`                       | copies of `doom2.wad` and `id24res.wad` from your GOG install |
@@ -968,6 +969,40 @@ GZDoom needs a picture for every frame a model replaces.
 * **Debug:** console command `netevent re_debug` prints your position, camera
   and inventory.
 
+## Online co-op (netgames)
+
+`host_coop` / `join_coop` start GZDoom's own netgame: `-host 2 -port 5029
+-netmode 1` (packet server) and `-join <address>:5029`. Both computers run the
+whole game tic by tic and exchange only key presses, so every decision in play
+code must come out the same on both. The rules the code follows:
+
+* **Never `consoleplayer` in play code.** "This computer's player" differs per
+  computer. Map-start code uses `REMain.Player()` / `REMain.Number()` (the
+  lowest player in the game, `RE_Const.zs`); per-player code uses the actor's
+  own `PlayerNumber()`. Only screens (inventory, item box screen, map screen,
+  death-screen key) read `consoleplayer`, and they change the game only through
+  `EventHandler.SendNetworkEvent`.
+* **Per-player state:** `REInputBridge.heldButtons[player]` (keys held, from
+  the `re_held` event); the map screen's visited rooms (`REMapKeyHandler`,
+  player p's rooms from `p * sector count`); the cameras.
+* **Cameras:** `RECameraHandler` (`FixedCamera.zs`) keeps its fields for one
+  player at a time. `WorldTick` runs `UsePlayer(i)` then `TickPlayer` for each
+  player: `UsePlayer` stores the previous player's fields in the `p...` arrays
+  and loads player i's (the first time: the map-start values, and player 2
+  gets their own automatic camera actor). `SetView` gives the camera only to
+  that player. In single player only player 0 exists, so nothing changes.
+* **Off online** (`REMain.Online()`, which is `multiplayer`): the AI partner,
+  saving (typewriter, F6, Save Game show "No saving in online co-op"), records,
+  cheats (menu and codes), the custom cast call, Super Jump. Flat corpses'
+  "first person only" counts as both views.
+* **Dying:** `RE_Continue.zs` already handles netgames: `re_continue` sets
+  `PST_REBORN` for that player, and `PlayerRespawned` restores their entry
+  snapshot.
+* **`map` is refused in a netgame** ("Use changemap instead"); `+map` on the
+  command line works. Testing on one PC: two copies, each with its own
+  `-config`, the joiner on `127.0.0.1:5029`; a desync shows as a "Consistency
+  failure" / out-of-sync message in the console.
+
 ## Known limits
 
 * Doom graphics still stand in for the zombie (a zombieman).
@@ -979,6 +1014,9 @@ GZDoom needs a picture for every frame a model replaces.
 * Walking speed uses RE1's steady value; RE1 also dips slightly on each step.
 * Gamepads: the d-pad works if bound to the same commands; analog sticks
   don't drive the tank controls.
+* Online co-op: 2 players, no saving; Windows with Mac isn't guaranteed to
+  stay in step (floating-point maths can differ), so the README asks for the
+  same kind of computer.
 
 The RE1 decomp is GPL-3.0. This mod copies its numbers and rules, not its
 code.

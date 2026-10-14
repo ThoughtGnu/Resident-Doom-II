@@ -26,6 +26,10 @@
 !/play.command
 !/play_mansion.command
 !/play_doom2.command
+!/host_coop.bat
+!/join_coop.bat
+!/host_coop.command
+!/join_coop.command
 
 # 3. documentation
 !/docs/*.md

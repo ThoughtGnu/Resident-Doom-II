@@ -94,6 +94,7 @@ class RECastHandler : EventHandler
 	override void WorldThingDied(WorldEvent e)
 	{
 		if (!(e.Thing is "BossBrain")) return;
+		if (REMain.Online()) return;   // online co-op: Doom II's own ending
 		let info = LevelInfo.FindLevelInfo(castMaps[WhoPlayed() - 1]);
 		if (info == null || info.NextMap.Length() == 0) return;   // (then Doom II's own ending, unchanged)
 		level.NextMap = info.NextMap;

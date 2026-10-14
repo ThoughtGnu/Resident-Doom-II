@@ -191,7 +191,7 @@ class REPartner : Actor
 	// over to the next map and into saved games with them.
 	REInventory LeaderInv()
 	{
-		let leader = players[consoleplayer].mo;
+		let leader = REMain.Player();
 		return leader != null ? REInventory(leader.FindInventory("REInventory")) : null;
 	}
 	bool IsPoisoned()
@@ -237,7 +237,7 @@ class REPartner : Actor
 		Super.Tick();
 		if (isFrozen()) return;
 		if (pumpAt > 0 && level.maptime >= pumpAt) { pumpAt = 0; A_StartSound("re1/shotgunpump", CHAN_7); }
-		let leader = players[consoleplayer].mo;
+		let leader = REMain.Player();
 		if (leader == null) return;
 
 		UpdateLights();
@@ -653,7 +653,7 @@ class REPartner : Actor
 	// picture, or in front of them in first person?
 	bool InLeaderView(Actor leader)
 	{
-		let cam = REFixedCamera(players[consoleplayer].camera);
+		let cam = REFixedCamera(players[REMain.Number()].camera);
 		if (cam != null) return cam.ViewScore(self) > 0;
 		return abs(DeltaAngle(leader.Angle, leader.AngleTo(self))) < 70 && leader.CheckSight(self, SF_IGNOREVISIBILITY);
 	}
@@ -688,7 +688,7 @@ class REPartner : Actor
 	// something elsewhere), a lift or any other special.
 	const DOOR_REACH = 48;
 
-	static Actor Leader() { return players[consoleplayer].mo; }
+	static Actor Leader() { return REMain.Player(); }
 
 	// The door's lock (0 none): Door_LockedRaise's arg 4, Generic_Door's arg 5.
 	static int LockOf(Line l)
@@ -797,7 +797,7 @@ class REPartner : Actor
 		// The shot hits the enemy directly: it can never hit the player.
 		A_StartSound(fireSound, CHAN_WEAPON);
 		A_AlertMonsters();
-		let leader = players[consoleplayer].mo;
+		let leader = REMain.Player();
 		REAim.Hit(self, enemy, damage);
 		class<Actor> blast = BlastClass();
 		if (blast != null && enemy != null) Spawn(blast, enemy.pos + (0, 0, enemy.Height * 0.5), ALLOW_REPLACE);
@@ -814,7 +814,7 @@ class REPartner : Actor
 	// Count the time the partner is off the player's camera.
 	void CheckCamera(Actor leader, double dist)
 	{
-		let cam = REFixedCamera(players[consoleplayer].camera);
+		let cam = REFixedCamera(players[REMain.Number()].camera);
 		if (cam == null || dist < 384 || cam.ViewScore(self) > 0) offCamTics = 0;
 		else if (stuckTics > 0) offCamTics++;            // off camera and not getting closer
 		else offCamTics = max(0, offCamTics - 1);       // off camera but on her way: no hurry
@@ -902,7 +902,8 @@ class REPartnerHandler : EventHandler
 	override void WorldLoaded(WorldEvent e)
 	{
 		if (e.IsSaveGame || re_partner == 0 || !re_ai_partner) return;
-		let pmo = players[consoleplayer].mo;
+		if (REMain.Online()) return;   // online co-op: the second character is a real player, no AI partner
+		let pmo = REMain.Player();
 		if (pmo == null) return;
 		bool youAreChris = pmo is "REChrisPlayer";
 		class<Actor> who = null;
