@@ -30,7 +30,7 @@ class REBalanceHandler : EventHandler
 	override void WorldLoaded(WorldEvent e)
 	{
 		if (e.IsSaveGame) return;
-		let pmo = REMain.Player();
+		let pmo = players[consoleplayer].mo;
 		if (pmo == null) return;
 		String before = Counts();
 

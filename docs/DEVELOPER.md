@@ -45,8 +45,7 @@ in a few pixels).
 
 ## How to play
 
-* **`play.bat`**: a small menu first (Enter or 1 = Play, 2 = host online co-op,
-  3 = join online co-op). Play opens at the Resident Doom title screen ("PRESS ENTER TO
+* **`play.bat`**: opens at the Resident Doom title screen ("PRESS ENTER TO
   PLAY", with the credit lines under it). Only Enter opens the menu; other
   keys do nothing there, and Esc in the menu goes back to the title. New Game asks **Jill or Chris** (RE1's character-select desk, both
   drawn from their RE1 models), then Doom II's levels or "Mansion - (custom level)".
@@ -218,11 +217,19 @@ teammate:
   also check the item box, typewriters and Doom's solid decorations, and
   check the floor along the way, so they don't walk into a ledge too high to
   step up (like the one beside MAP02's first corridor).
+- **Jumping:** a ledge just ahead on their way that's higher than a step (24)
+  but at most 48, with room to stand on it, and where they're going is up
+  there: they jump with your own jump strength (GZDoom's JumpZ, about 36 up)
+  and land on it (`JumpAhead`).
 - **Catching up (last resort):** only when they aren't getting anywhere:
   stuck for 3 seconds, very far behind and stuck for a second, or off camera
   for 8 seconds without getting closer. Then they step onto your trail just behind you,
-  but only while both they and that spot are out of your view (the fixed
-  camera's picture, or what's in front of you in first person).
+  while both they and that spot are out of your view (the fixed
+  camera's picture, or what's in front of you in first person). You far above
+  or below them (more than a jump: a lift, a ledge, a pit) doesn't count as
+  "close", however near on the map, and fighting from down there doesn't stop
+  the catch-up; stranded like that for 5 seconds (MAP30's pit, where the boss
+  camera keeps them in view), the catch-up may happen in view too.
 - **Fighting:** they stop, raise their own weapon at the nearest enemy they
   can see and fire with RE1's damage (Beretta 9, shotgun 53). Their shots hit
   the enemy directly, so they can never hurt you.
@@ -413,6 +420,40 @@ arena. Each one is aimed between you and the face with a lens just wide enough
 for both, preferring views where you don't cover the brain's hole and that also
 show the partner. In the closed start room of a normal MAP30 game the face
 can't be seen, so the usual cameras are used until you reach the arena.
+
+**MAP30, the normal way (unchanged from Doom II):** ride a side lift up to the
+high ledge at the back of the arena (Action on its edge), press the switch in
+the small alcove there (line 40: the centre lift goes up 512 to 416), then
+Action on the centre lift's side (it comes down into the brown pit, then
+carries you up). The brain stands deep in an alcove behind the face; the only
+way in is a slit 32 high (384-416), so in Doom a rocket only gets in while the
+lift rises past it, then explodes just behind the brain. RE weapons see that
+too (`REAim.BrainSlitPitch`): from wherever you stand they look for a straight
+line in through the slit that ends within a rocket's blast of the brain
+(tilted up to 12 degrees); the rocket launcher fires along it (the middle of
+the lines that work, with room for the rocket's size), and the other guns
+count the brain as in reach. So from the top of the lift the rocket goes in
+about 4.5 degrees down. The Final Boss start still uses `BrainOpenFrom`.
+The Final Boss start raises the lift with `Floor_MoveToValue`, so it also marks
+the alcove switch as used (its picture flips to SW2, special cleared): pressed
+after that, Doom would add 512 and jam the lift against the 640 ceiling. The
+first time you use the lift's side before the switch, a hint says "Press the
+switch on the back ledge first."; pressing the switch while the lift is
+moving (Doom then ignores it) says to press it again (`REFinalBossHandler`).
+The Final Boss start and a Continue that restarts MAP30 both make the centre
+lift "ready" (`ReadyBossLift`, also called from `REContinueHandler`): the switch
+counts as used and the lift goes down to the pit's floor and waits, with
+"Press E to raise the lift." while you're near it (again every 8 seconds).
+`REFinalBossHandler.WorldTick` then runs it on E (on it or next to it): down,
+it rises to the start height (the lowest with the brain in view + 16, 312);
+up, with you on top, E does nothing, so you can't drop yourself into the pit;
+up, with you below it, E brings it down ("Press E to bring the lift down.").
+Doom's own lift lines are switched off meanwhile (`ShouldActivate = false`).
+The Final Boss start puts you on the lowered lift; a Continue starts you in the
+start room. A first visit from MAP29 stays vanilla.
+The arena (its 640-high open areas) counts as at least 176 bright on MAP30
+(`RELightingHandler.BrightenBossArena`, both lighting modes), so the far side
+isn't black from the third-person cameras.
 
 **Cheats** (main menu > Extras > **Cheats**, from the title screen or Esc in-game). The
 **Cheat List** at the top of that screen shows every cheat, what it does and its
@@ -969,88 +1010,6 @@ GZDoom needs a picture for every frame a model replaces.
 * **Debug:** console command `netevent re_debug` prints your position, camera
   and inventory.
 
-## Online co-op (netgames)
-
-`play.bat` / `play.command` show a small menu (Enter = Play, the title
-screen as before; options on the command line skip the menu). **2 Host** and
-**3 Join** start GZDoom's own netgame: `-host 2 -port 5029
--netmode 1` (packet server) and `-join <address>:5029`. Both computers run the
-whole game tic by tic and exchange only key presses, so every decision in play
-code must come out the same on both. The rules the code follows:
-
-* **Never `consoleplayer` in play code.** "This computer's player" differs per
-  computer. Map-start code uses `REMain.Player()` / `REMain.Number()` (the
-  lowest player in the game, `RE_Const.zs`); per-player code uses the actor's
-  own `PlayerNumber()`. Only screens (inventory, item box screen, map screen,
-  death-screen key) read `consoleplayer`, and they change the game only through
-  `EventHandler.SendNetworkEvent`.
-* **Per-player state:** `REInputBridge.heldButtons[player]` (keys held, from
-  the `re_held` event); the map screen's visited rooms (`REMapKeyHandler`,
-  player p's rooms from `p * sector count`); the cameras.
-* **Cameras:** `RECameraHandler` (`FixedCamera.zs`) keeps its fields for one
-  player at a time. `WorldTick` runs `UsePlayer(i)` then `TickPlayer` for each
-  player: `UsePlayer` stores the previous player's fields in the `p...` arrays
-  and loads player i's (the first time: the map-start values, and player 2
-  gets their own automatic camera actor). `SetView` gives the camera only to
-  that player. In single player only player 0 exists, so nothing changes.
-* **Off online** (`REMain.Online()`, which is `multiplayer`): the AI partner,
-  saving (typewriter, F6, Save Game show "No saving in online co-op"), records,
-  cheats (menu and codes), the custom cast call, Super Jump. Flat corpses'
-  "first person only" counts as both views.
-* **Dying:** `RE_Continue.zs` already handles netgames: `re_continue` sets
-  `PST_REBORN` for that player, and `PlayerRespawned` restores their entry
-  snapshot.
-* **`map` is refused in a netgame** ("Use changemap instead"); `+map` on the
-  command line works. Testing on one PC: two copies, each with its own
-  `-config`, the joiner on `127.0.0.1:5029`; a desync shows as a "Consistency
-  failure" / out-of-sync message in the console.
-
-### Starting online games: the launcher and main menu > Online
-
-GZDoom sets up online games only when it starts, and ZScript can't start
-programs, so going online from inside the game works by "quit and relaunch":
-
-* **In the game** (`menudef.txt` REOnlineMenu, `RE_Online.zs`, `keyconf.txt`):
-  main menu > **Online** (both main menus) opens Host (Starting level: the name, e.g. "7. Dead Simple", and Enter opens
-  the Level Select screen as a picker, `REHostLevelMenu`; it stores `re_net_map`)
-  and Join (a text field, `re_net_address`, remembered). **Start hosting** and
-  **Join** are plain `SafeCommand` items running the aliases `re_online_host` /
-  `re_online_join` (`re_net_request host|join; quit`). It has to be a plain
-  SafeCommand: GZDoom only lets that exact class run `quit` from a menu (a
-  `Command` item or a subclass gets "Attempt to execute CCMD 'quit' outside of
-  menu code"). The questions are `RE_ONLINE_HOSTQ` / `RE_ONLINE_JOINQ` in
-  `language.txt` (MENUDEF strings don't understand `\n`). The `re_net_*` cvars
-  are `user` cvars, so an online game never replaces a joiner's with the
-  host's.
-* **`re_launcher`** (never remembered) is set only by the launchers
-  (`+set re_launcher 1`, plus `re_net_localip` for the "Friends type" line).
-  Without it (`play_doom2.bat`, GZDoom directly) Online says to start the game
-  with play.bat / play.command; inside an online game it says you're already
-  online.
-* **`play.bat`**: after the launch menu it starts a minimized copy of itself
-  (`play.bat __watch`, "Resident Doom launcher") with the choices in
-  environment variables, so the menu window can close. That copy runs GZDoom
-  with `start /wait`, then `tools\launcher\online.ps1` reads `re_net_request`,
-  `re_net_map` and `re_net_address` from the settings file (sanitized) and
-  **clears the request in the file** (only that line changes). A request starts
-  GZDoom again as host or joiner; after an online game it starts the normal
-  game once; otherwise it ends. A stale request is cleared before the first
-  start, and there are never more than 10 starts per double-click.
-  `RD_CONFIG` (environment) points it at another settings file, for testing
-  two copies on one PC.
-* **`play.command`**: the same in bash, in the Terminal window itself:
-  `open -W -n -a` waits for GZDoom; `sed` reads and clears the request
-  (BSD `sed -i ''`).
-* **Abort Network Game** on the waiting window closes GZDoom quietly (4.14.2,
-  Windows), so the launcher just starts the normal game. If the host quits an
-  online game, the joiner's game carries on until they quit too.
-* Checked on Windows with two copies (host + joiner, each with its own
-  `RD_CONFIG`): Online without the launcher, Play + Quit, in-game Host + Abort,
-  launch-menu Host + in-game Join, launch-menu Host + Join, a killed host and a
-  stale request (no loop); the bash logic with a fake `open` (all paths and the
-  10-start limit). Single-player demos replay identically on the old and new
-  mod.
-
 ## Known limits
 
 * Doom graphics still stand in for the zombie (a zombieman).
@@ -1062,9 +1021,6 @@ programs, so going online from inside the game works by "quit and relaunch":
 * Walking speed uses RE1's steady value; RE1 also dips slightly on each step.
 * Gamepads: the d-pad works if bound to the same commands; analog sticks
   don't drive the tank controls.
-* Online co-op: 2 players, no saving; Windows with Mac isn't guaranteed to
-  stay in step (floating-point maths can differ), so the README asks for the
-  same kind of computer.
 
 The RE1 decomp is GPL-3.0. This mod copies its numbers and rules, not its
 code.

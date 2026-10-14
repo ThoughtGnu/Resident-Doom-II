@@ -95,7 +95,6 @@ mod/zscript/RE_Manual.zs
 mod/zscript/RE_Map.zs
 mod/zscript/RE_MidTypewriter.zs
 mod/zscript/RE_Monsters.zs
-mod/zscript/RE_Online.zs
 mod/zscript/RE_Partner.zs
 mod/zscript/RE_Poison.zs
 mod/zscript/RE_Records.zs
@@ -113,7 +112,6 @@ README.md
 setup.bat
 setup.command
 THIRD-PARTY-NOTICES.md
-tools/launcher/online.ps1
 tools/pack_map.ps1
 tools/re1convert/build.bat
 tools/re1convert/CastSprites.cs

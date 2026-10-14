@@ -17,7 +17,7 @@
 class REInputBridge : StaticEventHandler
 {
 	// Buttons currently held on the keyboard (BT_* bits), as last reported.
-	int heldButtons[MAXPLAYERS];   // per player (online co-op): each player's own held keys
+	int heldButtons;
 
 	ui int uiHeld;
 
@@ -95,8 +95,8 @@ class REInputBridge : StaticEventHandler
 	{
 		if (e.Name ~== "re_held")
 		{
-			if (e.Player >= 0 && e.Player < MAXPLAYERS) heldButtons[e.Player] = e.Args[0];
-			if (re_debugcams) Console.Printf("held keys (player %d): 0x%x", e.Player + 1, e.Args[0]);
+			heldButtons = e.Args[0];
+			if (re_debugcams) Console.Printf("held keys: 0x%x", heldButtons);
 		}
 		// Toggle Run (CapsLock, keyconf.txt re_togglerun): the message for it
 		else if (e.Name ~== "re_runmsg" && e.Player >= 0 && playeringame[e.Player] && players[e.Player].mo != null)

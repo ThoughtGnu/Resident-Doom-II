@@ -32,8 +32,28 @@ class RELightingHandler : EventHandler
 		if (e.IsSaveGame) return;   // brightness and these fields were saved with the game
 		original.Clear();
 		for (int i = 0; i < level.Sectors.Size(); i++) original.Push(level.Sectors[i].lightlevel);
+		BrightenBossArena();
 		darkened = false;
 		if (re_dark) Darken();
+	}
+
+	// MAP30 (Icon of Sin): Doom lights the arena dimly (112-160), and the
+	// third-person cameras look across it from far away, where Doom's light
+	// fades with distance, so the far side was almost black from the top of
+	// the lift. Its open areas (the arena's 640-high ceiling) count as at least
+	// ARENA_LIGHT bright in both modes; RE1 lighting still darkens them from there.
+	const ARENA_LIGHT = 176;
+
+	void BrightenBossArena()
+	{
+		if (!(level.MapName ~== "MAP30")) return;
+		for (int i = 0; i < level.Sectors.Size(); i++)
+		{
+			Sector s = level.Sectors[i];
+			if (s.CenterCeiling() < 600 || original[i] >= ARENA_LIGHT) continue;
+			original[i] = ARENA_LIGHT;
+			s.SetLightLevel(ARENA_LIGHT);
+		}
 	}
 
 	// A sector's brightness in RE1 lighting.

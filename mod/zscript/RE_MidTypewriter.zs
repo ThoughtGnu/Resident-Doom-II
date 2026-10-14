@@ -20,7 +20,7 @@ class REMidTypewriterHandler : EventHandler
 	override void WorldLoaded(WorldEvent e)
 	{
 		if (e.IsSaveGame) return;   // already placed, saved with the map
-		let pmo = REMain.Player();
+		let pmo = players[consoleplayer].mo;
 		if (pmo == null) return;
 
 		int n = level.Sectors.Size();

@@ -27,11 +27,6 @@ class RELevelSelectMenu : OptionMenu
 
 	const ROWS = 16;
 
-	// Main menu > Online > Starting level uses this screen too, as a picker
-	// (REHostLevelMenu below): Doom II's levels only, named "7. Dead Simple",
-	// no character, and Enter picks the level instead of starting it.
-	virtual bool Picker() { return false; }
-
 	override void Init(Menu parent, OptionMenuDescriptor desc)
 	{
 		// The level items are added once, to the menu's description.
@@ -43,14 +38,10 @@ class RELevelSelectMenu : OptionMenu
 				if (!LevelInfo.MapExists(map)) continue;
 				let info = LevelInfo.FindLevelInfo(map);
 				String name = info != null ? info.LookupLevelName() : map;
-				String label = Picker() ? REOnlineNames.LevelText(map) : String.Format("%s  %s", map, name);
-				Add(desc, label, "map " .. map, String.Format("LV%02d", i), map);
+				Add(desc, String.Format("%s  %s", map, name), "map " .. map, String.Format("LV%02d", i), map);
 			}
-			if (!Picker())
-			{
-				Add(desc, "Mansion - (custom level)", "map REMAP01", "LVRE", "REMAP01");
-				Add(desc, "FINAL BOSS - Icon of Sin", "re_bossfight", "LVBOSS", "MAP30");
-			}
+			Add(desc, "Mansion - (custom level)", "map REMAP01", "LVRE", "REMAP01");
+			Add(desc, "FINAL BOSS - Icon of Sin", "re_bossfight", "LVBOSS", "MAP30");
 		}
 		Super.Init(parent, desc);
 		pics.Clear(); maps.Clear();
@@ -64,12 +55,6 @@ class RELevelSelectMenu : OptionMenu
 		charPic[1] = TexMan.CheckForTexture("CARDCHRS", TexMan.Type_Any);
 		// open on a level (Enter does nothing on the character row)
 		if (mDesc.mSelectedItem < 1) mDesc.mSelectedItem = 1;
-		// the picker opens on the level picked before
-		if (Picker())
-		{
-			String cur = CVar.FindCVar('re_net_map').GetString();
-			for (int i = 1; i < maps.Size(); i++) if (maps[i] ~== cur) mDesc.mSelectedItem = i;
-		}
 	}
 
 	void Add(OptionMenuDescriptor desc, String label, String cmd, String pic, String map)
@@ -88,21 +73,6 @@ class RELevelSelectMenu : OptionMenu
 	// character added stands in for it while it runs.
 	override bool MenuEvent(int mkey, bool fromcontroller)
 	{
-		if (Picker())
-		{
-			// Enter picks the highlighted level for hosting (re_net_map) and goes
-			// back to the Online page; there's no character to change.
-			if (mkey == MKEY_Left || mkey == MKEY_Right) return true;
-			int at = mDesc.mSelectedItem;
-			if (mkey == MKEY_Enter && at > 0 && at < maps.Size())
-			{
-				CVar.FindCVar('re_net_map').SetString(maps[at]);
-				MenuSound("menu/choose");
-				Close();
-				return true;
-			}
-			return Super.MenuEvent(mkey, fromcontroller);
-		}
 		// Left / Right switch the character wherever the cursor is.
 		if ((mkey == MKEY_Left || mkey == MKEY_Right) && mDesc.mSelectedItem > 0)
 		{
@@ -159,14 +129,13 @@ class RELevelSelectMenu : OptionMenu
 			int r = int((p.y - 62) / 18);
 			if (p.y >= 62 && r < ROWS && top + 1 + r < n) hit = top + 1 + r;
 		}
-		if (Picker() && hit == 0) hit = -1;   // no character row
 		if (hit >= 0 && hit != mDesc.mSelectedItem)
 		{
 			mDesc.mSelectedItem = hit;
 			MenuSound("menu/cursor");
 		}
 		if (type != MOUSE_Release) return true;
-		bool onCard = !Picker() && p.x >= 330 && p.x < 600 && p.y >= 226 && p.y < 330;
+		bool onCard = p.x >= 330 && p.x < 600 && p.y >= 226 && p.y < 330;
 		if (hit == 0 || onCard)
 		{
 			double mid = hit == 0 ? 170 : 465;
@@ -241,12 +210,11 @@ class RELevelSelectMenu : OptionMenu
 		int sel = mDesc.mSelectedItem;
 		int n = mDesc.mItems.Size();
 
-		Words(BigFont, Font.CR_RED, 20, 10, Picker() ? "HOST: STARTING LEVEL" : "LEVEL SELECT");
+		Words(BigFont, Font.CR_RED, 20, 10, "LEVEL SELECT");
 
-		// Character row (the picker: who plays whom online)
+		// Character row
 		bool onChar = sel == 0;
-		if (Picker()) Words(SmallFont, Font.CR_GRAY, 20, 42, "  You play Jill, your friend joins as Chris.");
-		else Words(SmallFont, onChar ? Font.CR_GOLD : Font.CR_GRAY, 20, 42,
+		Words(SmallFont, onChar ? Font.CR_GOLD : Font.CR_GRAY, 20, 42,
 			String.Format("%sCHARACTER:  < %s >", onChar ? "> " : "  ", CharLabel()));
 
 		// Level list
@@ -277,11 +245,6 @@ class RELevelSelectMenu : OptionMenu
 		if (sel > 0) Words(SmallFont, Font.CR_WHITE, px, py + ph + 6, mDesc.mItems[sel].mLabel);
 		if (sel > 0 && sel < pics.Size() && pics[sel] == "LVBOSS")
 			Words(SmallFont, Font.CR_RED, px, py + ph + 20, "Starts at the Icon. Shoot its brain!");
-		if (Picker())
-		{
-			Words(SmallFont, Font.CR_DARKGRAY, 20, 384, "UP/DOWN choose   ENTER pick this level   ESC back");
-			return;
-		}
 		// The character's ID card (RE1's character-select picture)
 		int lc = LevelChar();
 		if (lc >= 2)
@@ -299,13 +262,6 @@ class RELevelSelectMenu : OptionMenu
 	}
 }
 
-// Main menu > Online > Starting level (menudef.txt REHostLevelMenu): the Level
-// Select screen as a picker for the host's first level.
-class REHostLevelMenu : RELevelSelectMenu
-{
-	override bool Picker() { return true; }
-}
-
 // One level in the list: a menu command plus its picture.
 class RELevelItem : OptionMenuItemCommand
 {
@@ -319,6 +275,89 @@ class RELevelItem : OptionMenuItemCommand
 class REFinalBossHandler : EventHandler
 {
 	bool bossRun;   // this MAP30 run is the Final Boss (its own record, RE_Records.zs)
+	bool liftHinted;   // MAP30: the "switch on the back ledge" hint was shown
+	// MAP30 after the Final Boss start or a Continue (ReadyBossLift): the centre
+	// lift waits down at floor level and E raises it to liftTop; Doom's own
+	// lift lines are off (it can't drop you from the top). False: as Doom made it.
+	bool liftReady;
+	double liftTop, liftBottom;
+	int liftMsg;          // the lift message shown for where you are now (0 none, 1 raise, 2 bring down)
+	int liftMsgAgain;     // level.maptime when it's shown again if you're still there
+	bool useWasDown;
+
+	// MAP30's way to the brain: the lift in the middle of the arena (tag 2).
+	// In Doom a switch in the small alcove on the back ledge raises it 512 (once);
+	// after that, Action on its side brings it down and it carries you back up.
+	const LIFT_X = 2880;
+	const LIFT_Y = 832;
+
+	static int LiftTag()
+	{
+		return level.PointInSector((LIFT_X, LIFT_Y)).GetTag(0);
+	}
+
+	// The alcove switch for that lift, while it's still unused (Doom clears a
+	// one-time switch's special once it has worked).
+	static Line LiftSwitch(int tag)
+	{
+		for (int i = 0; i < level.lines.Size(); i++)
+		{
+			Line l = level.lines[i];
+			if (l.special == Floor_RaiseByValueTimes8 && l.args[0] == tag) return l;
+		}
+		return null;
+	}
+
+	// Mark that switch as used, as Doom does when it's pressed: its picture
+	// flips (SW1... to SW2...) and it does nothing any more.
+	static void UseUpSwitch(Line l)
+	{
+		for (int s = 0; s < 2; s++)
+		{
+			Side sd = l.sidedef[s];
+			if (sd == null) continue;
+			for (int part = Side.top; part <= Side.bottom; part++)
+			{
+				String tex = TexMan.GetName(sd.GetTexture(part));
+				if (!(tex.Left(3) ~== "SW1")) continue;
+				TextureID on = TexMan.CheckForTexture("SW2" .. tex.Mid(3), TexMan.Type_Wall);
+				if (on.IsValid()) sd.SetTexture(part, on);
+			}
+		}
+		l.special = 0;
+	}
+
+	// The first time you use the lift's side before the switch was pressed, a
+	// hint: on its own the lift only dips a little and comes back.
+	override void WorldLineActivated(WorldEvent e)
+	{
+		if (liftHinted || !(level.MapName ~== "MAP30") || e.ActivatedLine == null || e.Thing == null || e.Thing.player == null) return;
+		Line l = e.ActivatedLine;
+		int tag = LiftTag();
+		if (tag == 0 || l.special != Plat_DownWaitUpStayLip || l.args[0] != tag || LiftSwitch(tag) == null) return;
+		liftHinted = true;
+		let inv = REInventory(e.Thing.FindInventory("REInventory"));
+		if (inv != null) inv.ShowMessage("Press the switch on the back ledge first.");
+	}
+
+	// The alcove switch pressed while the lift is still moving (going down or
+	// coming back): Doom doesn't start it then and the switch stays unused, so
+	// say to press it again.
+	override void WorldLinePreActivated(WorldEvent e)
+	{
+		if (!(level.MapName ~== "MAP30") || e.ActivatedLine == null || e.Thing == null || e.Thing.player == null) return;
+		Line l = e.ActivatedLine;
+		int tag = LiftTag();
+		// The ready lift (after the Final Boss start or a Continue) is run by
+		// WorldTick: Doom's own "down, wait, up" on its sides stays off, so it
+		// never drops you from the top.
+		if (liftReady && l.special == Plat_DownWaitUpStayLip && l.args[0] == tag) { e.ShouldActivate = false; return; }
+		if (tag == 0 || l.special != Floor_RaiseByValueTimes8 || l.args[0] != tag) return;
+		Sector lift = level.PointInSector((LIFT_X, LIFT_Y));
+		if (lift.floordata == null) return;
+		let inv = REInventory(e.Thing.FindInventory("REInventory"));
+		if (inv != null) inv.ShowMessage("The lift is moving. Press it again.");
+	}
 
 	override void WorldLoaded(WorldEvent e)
 	{
@@ -326,18 +365,23 @@ class REFinalBossHandler : EventHandler
 		CVar.FindCVar('re_finalboss').SetInt(0);   // one go only
 		if (!(level.MapName ~== "MAP30")) return;
 		bossRun = true;
+		let pmo = players[consoleplayer].mo;
+		if (pmo != null) ReadyBossLift(pmo);
+	}
 
-		Actor brain = null;
-		let it = ThinkerIterator.Create("BossBrain");
-		brain = Actor(it.Next());
-		let pmo = REMain.Player();
-		if (brain == null || pmo == null) return;
-
-		// MAP30's own way to the brain is the lift in the middle of the
-		// arena: it carries you up until the brain shows through its opening.
-		// Stand on it and raise it to the lowest height that has the brain
-		// in view (Doom's own Floor_MoveToValue on the lift's tag).
-		Vector2 lift = (2880, 832);
+	// MAP30's own way to the brain is the lift in the middle of the arena: it
+	// carries you up until the brain shows through its opening. After the Final
+	// Boss start or a Continue, the lift is ready for that: it goes down to
+	// floor level and waits; E raises it to the lowest height that has the
+	// brain in view, plus a margin (TickLift). Its alcove switch counts as used.
+	// 'rider' (the Final Boss start) is put on the lift, facing the brain;
+	// without one (a Continue restart, REContinueHandler) you start in the
+	// start room as usual. False if this MAP30 has no such lift.
+	static bool ReadyBossLift(Actor rider = null)
+	{
+		let brain = Actor(ThinkerIterator.Create("BossBrain").Next());
+		if (brain == null) return false;
+		Vector2 lift = (LIFT_X, LIFT_Y);
 		Sector ls = level.PointInSector(lift);
 		int tag = ls.GetTag(0);
 		double floor = ls.floorplane.ZAtPoint(lift);
@@ -354,16 +398,93 @@ class REFinalBossHandler : EventHandler
 		if (!seen || tag == 0)
 		{
 			Console.Printf("Resident Doom: no view of the Icon from the lift; normal start.");
-			return;
+			return false;
 		}
 		h += 16;   // a little margin so the opening is well in view
-		pmo.SetOrigin((lift.x, lift.y, floor), false);
-		pmo.Vel = (0, 0, 0);
-		pmo.Angle = pmo.AngleTo(brain);
-		level.ExecuteSpecial(Floor_MoveToValue, pmo, null, false, tag, 64, int(abs(h)), h < 0);
-		Vector3 best = (lift.x, lift.y, h);		if (re_debugcams) Console.Printf("Final boss start at (%.0f, %.0f, %.0f)", best.x, best.y, best.z);
+		// floor level: the lowest floor around the lift (the pit), so you can
+		// walk onto it
+		double bottom = floor;
+		for (int i = 0; i < ls.lines.Size(); i++)
+		{
+			Line sl = ls.lines[i];
+			Sector o = sl.frontsector == ls ? sl.backsector : sl.frontsector;
+			if (o != null) bottom = min(bottom, o.floorplane.ZAtPoint(lift));
+		}
+		if (rider != null)
+		{
+			rider.SetOrigin((lift.x, lift.y, floor), false);
+			rider.Vel = (0, 0, 0);
+			rider.Angle = rider.AngleTo(brain);
+		}
+		if (bottom < floor) level.ExecuteSpecial(Floor_MoveToValue, rider, null, false, tag, 64, int(abs(bottom)), bottom < 0);
+		// The lift is already up, so its alcove switch counts as pressed: used
+		// again, it would push the lift 512 higher, into the ceiling, and the
+		// lift could never carry you up again. Now Action on the lift's side
+		// always brings it down and back up to this height.
+		Line sw = LiftSwitch(tag);
+		if (sw != null) UseUpSwitch(sw);
+		let me = REFinalBossHandler(EventHandler.Find('REFinalBossHandler'));
+		if (me != null)
+		{
+			me.liftHinted = true;
+			me.liftReady = true;
+			me.liftTop = h;
+			me.liftBottom = bottom;
+			me.liftMsg = 0;
+		}
+		if (re_debugcams) Console.Printf("MAP30 lift ready: down at %.0f, E raises it to %.0f%s", bottom, h, rider != null ? " (Final Boss start)" : "");
+		return true;
 	}
 
+	// The ready lift (liftReady), every tic: a message when you come near it,
+	// and E (Action) on it or next to it:
+	//   - down: up to liftTop, with you on it;
+	//   - up, you on top: nothing (so you can't drop yourself into the pit);
+	//   - up, you below it (you fell off): down again, to ride back up.
+	// E while aiming fires, so it's left alone then.
+	override void WorldTick()
+	{
+		if (!liftReady || !(level.MapName ~== "MAP30")) return;
+		let pmo = players[consoleplayer].mo;
+		if (pmo == null || pmo.health <= 0) return;
+		bool useDown = (players[consoleplayer].cmd.buttons & BT_USE) != 0;
+		bool pressed = useDown && !useWasDown;
+		useWasDown = useDown;
+
+		Vector2 lift = (LIFT_X, LIFT_Y);
+		Sector ls = level.PointInSector(lift);
+		double lf = ls.floorplane.ZAtPoint(lift);
+		bool moving = ls.floordata != null;
+		bool down = lf <= liftBottom + 1;
+		bool up = lf >= liftTop - 1;
+		Vector2 d = pmo.pos.xy - lift;
+		bool near = abs(d.x) <= LIFT_HALF + 40 && abs(d.y) <= LIFT_HALF + 40;
+		bool onTop = abs(d.x) <= LIFT_HALF + pmo.radius && abs(d.y) <= LIFT_HALF + pmo.radius && pmo.pos.z >= lf - 2;
+		let inv = REInventory(pmo.FindInventory("REInventory"));
+
+		// while you're near it: the message for where you are, again every 8
+		// seconds until you press E or walk away (one shown as the level fades
+		// in is easy to miss)
+		if (!near) liftMsg = 0;
+		else if (!moving)
+		{
+			int want = down ? 1 : ((up && !onTop) ? 2 : 0);
+			if (want != 0 && (want != liftMsg || level.maptime >= liftMsgAgain) && inv != null)
+			{
+				inv.ShowMessage(want == 1 ? "Press E to raise the lift." : "Press E to bring the lift down.");
+				liftMsgAgain = level.maptime + 35 * 8;
+			}
+			liftMsg = want;
+		}
+
+		let tank = RETankPlayer(pmo);
+		if (!pressed || !near || moving || (tank != null && tank.bREAiming)) return;
+		int tag = ls.GetTag(0);
+		if (down) level.ExecuteSpecial(Floor_MoveToValue, pmo, null, false, tag, LIFT_SPEED, int(abs(liftTop)), liftTop < 0);
+		else if (up && !onTop) level.ExecuteSpecial(Floor_MoveToValue, pmo, null, false, tag, LIFT_SPEED, int(abs(liftBottom)), liftBottom < 0);
+	}
+	const LIFT_HALF = 64;    // the lift is 128 square
+	const LIFT_SPEED = 32;   // Doom's own speed for this lift (its lines: Plat_DownWaitUpStayLip 32)
 	// Setup's Level Select picture (LVBOSS, "netevent re_capbossview" on MAP30):
 	// the same view on every computer. It does what the Final Boss start does,
 	// with its numbers fixed instead of searched for: stand on the lift in the

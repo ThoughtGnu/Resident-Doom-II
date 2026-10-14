@@ -47,7 +47,6 @@
 !/tools/setup/setup.ps1
 !/tools/setup/manifest.txt
 !/tools/pack_map.ps1
-!/tools/launcher/online.ps1
 
 # 6. built by setup from the player's games: never in the repository
 /mod/textures.cast.txt

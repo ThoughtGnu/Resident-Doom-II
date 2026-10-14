@@ -96,18 +96,6 @@ user string re_rec_REMAP01 = "";
 user string re_rec_BOSS = "";
 user string re_rec_last = "";   // the character and difficulty last recorded (the Records screen starts there)
 
-// Main menu > Online (RE_Online.zs). Picking Host or Join sets re_net_request and
-// quits; play.bat / play.command read it from the settings file, clear it and start
-// GZDoom again as host or joiner. User settings, so an online game never replaces
-// them with the host's.
-user string re_net_request = "";   // "", "host" or "join": what to start after this quit
-user string re_net_map = "MAP01";  // Host: the map
-user string re_net_address = "";   // Join: the host's address (remembered)
-// Set only by play.bat / play.command when they start the game (never remembered):
-// without it Online can't relaunch, so it says to use them.
-user noarchive bool re_launcher = false;
-user noarchive string re_net_localip = "";   // this computer's local address(es), for the Host page
-
 // Settings > Gameplay > Inventory style: 0 Resident Doom (default), 1 RE1 Classic (RE1's own status
 // screen and item box screen, RE_InvClassic.zs). Only the look; kept in the settings file.
 server int re_invstyle = 0;

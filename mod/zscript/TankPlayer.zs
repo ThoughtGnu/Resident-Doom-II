@@ -140,7 +140,7 @@ class RETankPlayer : DoomPlayer
 		if (reBridge)
 		{
 			let bridge = REInputBridge(StaticEventHandler.Find("REInputBridge"));
-			int held = bridge != null ? bridge.heldButtons[PlayerNumber()] : 0;
+			int held = bridge != null ? bridge.heldButtons : 0;
 			int fresh = buttons & (BT_FORWARD | BT_BACK | BT_LEFT | BT_RIGHT);
 			// (the held-keys report can take a few tics to arrive)
 			if (fresh != 0 || (held == 0 && level.maptime > 10)) reBridge = false;
@@ -544,14 +544,13 @@ class RETankPlayer : DoomPlayer
 	override void CheckJump()
 	{
 		// Settings > Gameplay > Jump off: Space does nothing (Super Jump still works).
-		bool superJump = re_cheat_jump && !REMain.Online();   // no cheats in online co-op
-		if (!re_allow_jump && !superJump) return;
+		if (!re_allow_jump && !re_cheat_jump) return;
 		if ((player.cmd.buttons & BT_JUMP) && player.onground && player.jumpTics == 0
 			&& player.crouchoffset == 0 && waterlevel < 2 && !bNoGravity && health > 0)
 		{
 			// Cheats > Super Jump (re_cheat_jump): 2.5 times the speed, about 6 times
 			// as high (roughly 200 units instead of 32).
-			Vel.Z += JumpZ * 35 / TICRATE * (superJump ? 2.5 : 1.0);
+			Vel.Z += JumpZ * 35 / TICRATE * (re_cheat_jump ? 2.5 : 1.0);
 			bOnMobj = false;
 			player.jumpTics = -1;
 			if (!(player.cheats & CF_PREDICTING)) A_StartSound("*jump", CHAN_BODY);

@@ -421,13 +421,12 @@ extend class RECameraHandler
 	// through Doom's screen melt).
 	void PickOpening(PlayerPawn pmo)
 	{
-		UsePlayer(pmo.PlayerNumber());
 		if (!autoMode)
 		{
 			let best = BestCamera(pmo);
 			if (best == null) return;
 			SwitchTo(best.camId);
-			SetView(best);
+			for (int i = 0; i < MAXPLAYERS; i++) if (playeringame[i]) players[i].camera = best;
 			return;
 		}
 		if (autoCam == null || candX.Size() == 0) return;
@@ -436,7 +435,7 @@ extend class RECameraHandler
 		autoCand = -1;
 		if (BossFight() && BossTick(pmo))   // MAP30: her and the Icon of Sin
 		{
-			SetView(autoCam);
+			for (int i = 0; i < MAXPLAYERS; i++) if (playeringame[i]) players[i].camera = autoCam;
 			return;
 		}
 		bool has; Vector3 spot;
@@ -456,7 +455,7 @@ extend class RECameraHandler
 			else AutoChase(pmo);
 		}
 		AimNow(pmo);
-		SetView(autoCam);
+		for (int i = 0; i < MAXPLAYERS; i++) if (playeringame[i]) players[i].camera = autoCam;
 	}
 
 	// Looking straight at her middle, zoomed for the distance, no turning in.
@@ -479,7 +478,6 @@ extend class RECameraHandler
 
 	bool FrameStartProps(Actor pmo, Actor box, Actor tw, bool canMove = true)
 	{
-		if (pmo.player != null) UsePlayer(pmo.PlayerNumber());
 		if (!autoMode || autoProbe == null || autoCam == null) return false;
 		// every spot that can show her, best first (normal rules, then close shots)
 		Array<int> idx; Array<double> sc; Array<int> closeOnly;
@@ -509,7 +507,7 @@ extend class RECameraHandler
 				if (!ok) continue;
 				autoClose = closeOnly[n] == 1;
 				AutoSwitch(idx[n], pmo);
-				SetView(autoCam);
+				for (int i = 0; i < MAXPLAYERS; i++) if (playeringame[i]) players[i].camera = autoCam;
 				autoHold = true;
 				autoHoldPos = pmo.pos;
 				return true;
@@ -671,7 +669,7 @@ extend class RECameraHandler
 		{
 			if (BossTick(pmo))
 			{
-				SetView(autoCam);
+				for (int i = 0; i < MAXPLAYERS; i++) if (playeringame[i] && players[i].camera != autoCam) players[i].camera = autoCam;
 				return;
 			}
 			if (autoCand == AUTO_BOSS) autoCand = -1;   // no spot sees both from here: the usual cameras
@@ -714,7 +712,7 @@ extend class RECameraHandler
 			}
 			else
 			{
-				SetView(autoCam);
+				for (int i = 0; i < MAXPLAYERS; i++) if (playeringame[i] && players[i].camera != autoCam) players[i].camera = autoCam;
 				return;
 			}
 		}
@@ -764,6 +762,9 @@ extend class RECameraHandler
 			}
 		}
 
-		SetView(autoCam);
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			if (playeringame[i] && players[i].camera != autoCam) players[i].camera = autoCam;
+		}
 	}
 }

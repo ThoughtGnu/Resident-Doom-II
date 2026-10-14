@@ -7,10 +7,14 @@
 //     It cuts ahead along the trail only where the straight walk is clear
 //     for its whole width, steers around corners and door frames when the
 //     next step is blocked, and slides along walls.
+//   - Jumping: a ledge on their way too high to step onto but within a jump
+//     (the same jump as yours): they jump up after you.
 //   - Last resort, after being stuck for 3 seconds, off camera for 8
 //     seconds or very far behind: they catch up by stepping onto your trail
-//     just behind you, but only while both they and that spot are out of
-//     your view (the fixed camera's, or yours in first person).
+//     just behind you, while both they and that spot are out of your view
+//     (the fixed camera's, or yours in first person). Stranded far below or
+//     above you for 5 seconds (a pit like MAP30's, you up on a lift), they
+//     catch up even where you can see it.
 //   - They never stand in a closing door, and you walk straight through each
 //     other (ThruBits), so they can't block a doorway or a corridor.
 //   - Fighting: they stop, face the nearest enemy they can see and fire their
@@ -44,6 +48,8 @@ class REPartner : Actor
 	Array<double> trailX, trailY, trailZ;   // where the leader walked
 	Actor enemy;
 	int aimTics, cooldown, stuckTics, offCamTics, scanTics, fireUntil;
+	int apartTics;                 // how long you've been far above or below them (a lift, a pit)
+	int jumpCooldown;
 	int pumpAt;                    // level.maptime of the shotgun's pump (0 = none)
 	Vector2 lastPos;
 	double lastGoalDist;
@@ -60,6 +66,9 @@ class REPartner : Actor
 	const CROUCH_H = 28;           // crouched, like the player (half their height)
 	const FOLLOW_DIST = 64;
 	const FIGHT_RANGE = 900;
+	const JUMP_VEL = 8;            // your jump (GZDoom's JumpZ, TankPlayer.zs CheckJump): about 36 up
+	const JUMP_REACH = 48;         // the highest ledge it gets them onto (that, plus a step, with a margin)
+	const APART_SEEN_TICS = 35 * 5;   // far above / below you this long: a catch-up may be in view
 
 	Default
 	{
@@ -191,7 +200,7 @@ class REPartner : Actor
 	// over to the next map and into saved games with them.
 	REInventory LeaderInv()
 	{
-		let leader = REMain.Player();
+		let leader = players[consoleplayer].mo;
 		return leader != null ? REInventory(leader.FindInventory("REInventory")) : null;
 	}
 	bool IsPoisoned()
@@ -237,7 +246,7 @@ class REPartner : Actor
 		Super.Tick();
 		if (isFrozen()) return;
 		if (pumpAt > 0 && level.maptime >= pumpAt) { pumpAt = 0; A_StartSound("re1/shotgunpump", CHAN_7); }
-		let leader = REMain.Player();
+		let leader = players[consoleplayer].mo;
 		if (leader == null) return;
 
 		UpdateLights();
@@ -388,6 +397,12 @@ class REPartner : Actor
 	void TickMove(Actor leader, double dist)
 	{
 		bool onground = pos.z <= floorz + 1;
+		// You far above or below them (on a lift, up a ledge, they're in a pit):
+		// not "close", however near on the map (dist is measured flat).
+		bool apart = abs(leader.pos.z - pos.z) > JUMP_REACH;
+		if (jumpCooldown > 0) jumpCooldown--;
+		if (apart) apartTics++;
+		else apartTics = 0;
 
 		// Map start: stand where they were put until the leader moves (or an
 		// enemy shows up), so nothing shifts in the opening shot.
@@ -409,13 +424,16 @@ class REPartner : Actor
 		// while, and only where you can't see it happen.
 		// (Only when she isn't getting anywhere: while she's walking the trail and
 		// opening doors she keeps going, however far behind or off camera.)
-		if ((stuckTics > 35 * 3 || (dist > 1100 && stuckTics > 35) || offCamTics > 35 * 8) && !InLeaderView(leader))
+		// Stranded far below or above you for a while (a pit they can't climb
+		// out of, you up on a lift): the catch-up may happen in view too.
+		bool anywhere = apartTics > APART_SEEN_TICS;
+		if ((stuckTics > 35 * 3 || (dist > 1100 && stuckTics > 35) || offCamTics > 35 * 8) && (anywhere || !InLeaderView(leader)))
 		{
 			String why = stuckTics > 35 * 3 ? "stuck" : (dist > 1100 ? "far" : "off camera");
-			if (CatchUp(leader)) { if (re_debugcams) Console.Printf("PARTNER catch-up (%s, %.0f away)", why, dist); return; }
+			if (CatchUp(leader, anywhere)) { if (re_debugcams) Console.Printf("PARTNER catch-up (%s, %.0f away%s)", why, dist, anywhere ? ", in view" : ""); return; }
 		}
-		if (re_debugcams && level.maptime % 35 == 0 && dist > FOLLOW_DIST)
-			Console.Printf("PARTNER state: %.0f away, trail %d, stuck %d, offcam %d, enemy %d | her %.0f %.0f, you %.0f %.0f", dist, trailX.Size(), stuckTics, offCamTics, enemy != null, pos.x, pos.y, leader.pos.x, leader.pos.y);
+		if (re_debugcams && level.maptime % 35 == 0 && (dist > FOLLOW_DIST || apart))
+			Console.Printf("PARTNER state: %.0f away (%.0f up), trail %d, stuck %d (long %d), offcam %d, enemy %d | her %.0f %.0f, you %.0f %.0f", dist, leader.pos.z - pos.z, trailX.Size(), stuckTics, apartTics, offCamTics, enemy != null, pos.x, pos.y, leader.pos.x, leader.pos.y);
 		CheckCamera(leader, dist);
 
 		// Fighting comes first, unless the leader is getting away.
@@ -425,7 +443,10 @@ class REPartner : Actor
 		bool doorway = InDoorway();
 		if (enemy != null && dist < 420 && !doorway)
 		{
+			// (stranded far below or above you, fighting doesn't stop them from catching up)
+			int wasStuck = stuckTics;
 			Fight();
+			if (apart) stuckTics = wasStuck + 1;
 			return;
 		}
 		aimTics = 0;
@@ -436,6 +457,7 @@ class REPartner : Actor
 		// Following: the breadcrumb trail, cutting ahead only where the
 		// straight walk is clear.
 		Vector2 goal;
+		double goalZ = leader.pos.z;
 		bool moving = false;
 		while (trailX.Size() > 0 && (Vec2To2(trailX[0], trailY[0])).Length() < 24) PopTrail();
 		// You in a clear straight walk: the breadcrumbs left behind don't matter
@@ -453,9 +475,9 @@ class REPartner : Actor
 			}
 		}
 		// (crouched: a few more steps out of the low gap, to stand up again)
-		if (dist > FOLLOW_DIST || InClosingDoor() || doorway || (crouched && dist > 24))
+		if (dist > FOLLOW_DIST || apart || InClosingDoor() || doorway || (crouched && dist > 24))
 		{
-			if (trailX.Size() > 0) { goal = (trailX[0], trailY[0]); moving = true; }
+			if (trailX.Size() > 0) { goal = (trailX[0], trailY[0]); goalZ = trailZ[0]; moving = true; }
 			else if (ClearPath(leader.pos.xy)) { goal = leader.pos.xy; moving = true; }
 		}
 
@@ -478,6 +500,15 @@ class REPartner : Actor
 				dir = SteerAround(dir, max(radius + 4, speed * 2));
 				Turn(VectorAngle(dir.x, dir.y), 12);
 				Vel.XY = dir * min(speed, len);
+				// A ledge just ahead, too high to step onto but within a jump,
+				// and where they're going is up there: jump, like you would.
+				if (jumpCooldown <= 0 && !crouched && JumpAhead(dir, goalZ))
+				{
+					Vel.Z = JUMP_VEL;
+					Vel.XY = dir * max(speed, RE_SPEED_WALK * re_speedscale);
+					jumpCooldown = 35;
+					if (re_debugcams) Console.Printf("PARTNER jumps at %.0f %.0f (z %.0f)", pos.x, pos.y, pos.z);
+				}
 			}
 			PlayAnim(dist > 200 ? 'run' : 'walk', true);
 			// stuck: not getting closer to where we're going
@@ -485,16 +516,40 @@ class REPartner : Actor
 			else stuckTics = max(0, stuckTics - 2);
 			lastGoalDist = len;
 		}
+		else if (moving && jumpCooldown > 15)
+		{
+			// in the air after one of their jumps: keep going (stepping down a stair
+			// is handled as before, below)
+		}
 		else
 		{
 			if (onground) Vel.XY = (0, 0);
-			// far behind with no way to go (the trail ran out): that's stuck too
-			if (dist > FOLLOW_DIST * 3) stuckTics++;
+			// far behind (or far below / above you) with no way to go: that's stuck too
+			if (dist > FOLLOW_DIST * 3 || apart) stuckTics++;
 			else stuckTics = 0;
 			lastGoalDist = 1e9;
 			UpdateCrouch((0, 0));   // stand up again once there's room
 			PlayAnim('idle', true);
 		}
+	}
+
+	// A ledge within the next steps (just past their body): higher than they
+	// can step up, not higher than JUMP_REACH, room to stand on it and to jump
+	// here, and where they're going (goalZ) is up on it.
+	bool JumpAhead(Vector2 dir, double goalZ)
+	{
+		if (ceilingz - pos.z < Height + 40) return false;   // no room to jump here
+		for (double k = radius + 4; k <= radius + 24; k += 4)
+		{
+			Vector2 p = pos.xy + dir * k;
+			Sector s = level.PointInSector(p);
+			double fz = s.floorplane.ZatPoint(p);
+			double rise = fz - pos.z;
+			if (rise <= MaxStepHeight) continue;
+			if (rise > JUMP_REACH || goalZ < fz - MaxStepHeight) return false;
+			return s.ceilingplane.ZatPoint(p) - fz >= Height;
+		}
+		return false;
 	}
 
 	// --- Crouching through low gaps ----------------------------------------------
@@ -653,7 +708,7 @@ class REPartner : Actor
 	// picture, or in front of them in first person?
 	bool InLeaderView(Actor leader)
 	{
-		let cam = REFixedCamera(players[REMain.Number()].camera);
+		let cam = REFixedCamera(players[consoleplayer].camera);
 		if (cam != null) return cam.ViewScore(self) > 0;
 		return abs(DeltaAngle(leader.Angle, leader.AngleTo(self))) < 70 && leader.CheckSight(self, SF_IGNOREVISIBILITY);
 	}
@@ -688,7 +743,7 @@ class REPartner : Actor
 	// something elsewhere), a lift or any other special.
 	const DOOR_REACH = 48;
 
-	static Actor Leader() { return REMain.Player(); }
+	static Actor Leader() { return players[consoleplayer].mo; }
 
 	// The door's lock (0 none): Door_LockedRaise's arg 4, Generic_Door's arg 5.
 	static int LockOf(Line l)
@@ -797,7 +852,7 @@ class REPartner : Actor
 		// The shot hits the enemy directly: it can never hit the player.
 		A_StartSound(fireSound, CHAN_WEAPON);
 		A_AlertMonsters();
-		let leader = REMain.Player();
+		let leader = players[consoleplayer].mo;
 		REAim.Hit(self, enemy, damage);
 		class<Actor> blast = BlastClass();
 		if (blast != null && enemy != null) Spawn(blast, enemy.pos + (0, 0, enemy.Height * 0.5), ALLOW_REPLACE);
@@ -814,7 +869,7 @@ class REPartner : Actor
 	// Count the time the partner is off the player's camera.
 	void CheckCamera(Actor leader, double dist)
 	{
-		let cam = REFixedCamera(players[REMain.Number()].camera);
+		let cam = REFixedCamera(players[consoleplayer].camera);
 		if (cam == null || dist < 384 || cam.ViewScore(self) > 0) offCamTics = 0;
 		else if (stuckTics > 0) offCamTics++;            // off camera and not getting closer
 		else offCamTics = max(0, offCamTics - 1);       // off camera but on her way: no hurry
@@ -822,32 +877,36 @@ class REPartner : Actor
 
 	// Step onto the player's trail just behind them (or right behind them),
 	// only to a spot the player can't see. False if there is none.
-	bool CatchUp(Actor leader)
+	// 'anywhere': stranded far above / below the player for a while, a spot in
+	// their view is fine too (otherwise never).
+	bool CatchUp(Actor leader, bool anywhere = false)
 	{
 		stuckTics = 0; offCamTics = 0; lastGoalDist = 1e9;
 		Vector3 old = pos;
-		for (int i = trailX.Size() - 1; i >= 0; i--)
+		bool ok = false;
+		for (int i = trailX.Size() - 1; i >= 0 && !ok; i--)
 		{
 			Vector3 p = (trailX[i], trailY[i], trailZ[i]);
 			double d = (p.xy - leader.pos.xy).Length();
 			if (d < 48 || d > 192 || abs(p.z - leader.pos.z) > 24) continue;
-			if (TryTeleport(p, leader)) { while (trailX.Size() > i + 1) PopTrail(); return true; }
+			if (TryTeleport(p, leader, anywhere)) { while (trailX.Size() > i + 1) PopTrail(); ok = true; }
 		}
-		for (int a = 0; a < 360; a += 45)
+		for (int a = 0; a < 360 && !ok; a += 45)
 		{
 			Vector2 at = leader.pos.xy + Actor.AngleToVector(leader.Angle + 180 + a, 56);
-			if (TryTeleport((at.x, at.y, leader.pos.z), leader)) return true;
+			if (TryTeleport((at.x, at.y, leader.pos.z), leader, anywhere)) ok = true;
 		}
-		SetOrigin(old, false);
-		return false;
+		if (!ok) { SetOrigin(old, false); return false; }
+		apartTics = 0;
+		return true;
 	}
 
-	bool TryTeleport(Vector3 p, Actor leader)
+	bool TryTeleport(Vector3 p, Actor leader, bool anywhere = false)
 	{
 		SetOrigin(p, false);
 		SetZ(floorz);
 		if (abs(pos.z - leader.pos.z) > 24 || !TestMobjLocation() || !CheckSight(leader, SF_IGNOREVISIBILITY)) return false;
-		if (InLeaderView(leader)) return false;   // never appear in front of the player
+		if (!anywhere && InLeaderView(leader)) return false;   // never appear in front of the player (unless stranded)
 		Vel = (0, 0, 0);
 		Angle = AngleTo(leader);
 		trailX.Clear(); trailY.Clear(); trailZ.Clear();
@@ -902,8 +961,7 @@ class REPartnerHandler : EventHandler
 	override void WorldLoaded(WorldEvent e)
 	{
 		if (e.IsSaveGame || re_partner == 0 || !re_ai_partner) return;
-		if (REMain.Online()) return;   // online co-op: the second character is a real player, no AI partner
-		let pmo = REMain.Player();
+		let pmo = players[consoleplayer].mo;
 		if (pmo == null) return;
 		bool youAreChris = pmo is "REChrisPlayer";
 		class<Actor> who = null;

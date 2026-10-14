@@ -94,6 +94,11 @@ class REContinueHandler : StaticEventHandler
 			else Take(p);
 		}
 		if (re_debugcams) Console.Printf("CONTINUE %s: %s", level.MapName, restarting ? "level restarted with the entry snapshot" : "entry snapshot taken");
+		// MAP30 (Icon of Sin): after a Continue you don't redo the side lifts,
+		// the back ledge and the alcove switch: the centre lift is up and ready,
+		// as at Level Select's Final Boss start (RE_LevelSelect.zs). A first
+		// visit stays as Doom made it.
+		if (restarting && level.MapName ~== "MAP30") REFinalBossHandler.ReadyBossLift();
 		restarting = false;
 	}
 

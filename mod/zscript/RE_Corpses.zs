@@ -101,8 +101,7 @@ class RECorpseHandler : EventHandler
 			let pl = RETankPlayer(players[i].mo);
 			if (pl != null) { firstPerson = pl.bREFirstPerson; break; }
 		}
-		// Online co-op: "first person only" counts as both views (each player has their own view).
-		bool on = mode == 2 || (mode == 1 && (firstPerson || REMain.Online()));
+		bool on = mode == 2 || (mode == 1 && firstPerson);
 		double stretch = clamp(CVar.FindCVar("re_flat_corpse_stretch").GetFloat(), 0.5, 3);
 
 		let it = ThinkerIterator.Create("Actor");

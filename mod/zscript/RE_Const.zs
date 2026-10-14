@@ -48,26 +48,3 @@ const RE_GUN_HALF_WIDTH = 40.625;    // Beretta range 1300 / 32
 // Knife: the closest enemy within (enemy radius + 500) of the blade tip.
 const RE_KNIFE_TIP   = 11.875;       // blade tip ~380 units ahead
 const RE_KNIFE_REACH = 15.625;       // knife range 500 / 32
-
-// The main player: the lowest player number in the game. In an online game
-// it's the same player on every computer, unlike consoleplayer ("this
-// computer's player"), so game decisions made for it (map-start layout, the
-// partner's leader, the Final Boss start) never differ between the computers.
-// In single player it is the one player.
-class REMain
-{
-	static clearscope int Number()
-	{
-		for (int i = 0; i < MAXPLAYERS; i++) if (playeringame[i] && players[i].mo != null) return i;
-		return 0;
-	}
-
-	static clearscope PlayerPawn Player()
-	{
-		int n = Number();
-		return playeringame[n] ? players[n].mo : null;
-	}
-
-	// An online game (GZDoom's netgame), where some single-player features are off.
-	static clearscope bool Online() { return multiplayer; }
-}

@@ -453,7 +453,7 @@ class REKnifePickup : REWeaponPickup
 	{
 		if (bDestroyed || bDropped) return;   // a knife you dropped stays a knife
 		class<Actor> ammo = "REClipPickup";
-		let pmo = REMain.Player();
+		let pmo = players[consoleplayer].mo;
 		let inv = pmo != null ? REInventory(pmo.FindInventory("REInventory")) : null;
 		if (inv != null)
 		{
@@ -885,7 +885,7 @@ class REGun : REWeapon
 	// Only the Infinite Ammo cheat makes rounds and fuel last for ever. All
 	// Weapons' guns start full and are used up like any other
 	// (REInventory.cheatRounds keeps each one's rounds).
-	bool Bottomless() { return re_cheat_ammo && !REMain.Online(); }   // no cheats in online co-op
+	bool Bottomless() { return re_cheat_ammo; }
 
 	virtual int ShotDamage() { return damage; }
 	virtual Sound ShotSound() { return fireSound; }
@@ -1018,7 +1018,23 @@ class RERocketLauncher : REGun
 		REGun.FireSound "re1/rocket";
 	}
 
-	override void HitTarget(Actor shooter, Actor target) { Miss(shooter); }
+	// The Icon of Sin's brain in the aim band (MAP30): the rocket is sent in
+	// through the slit in the face, so its blast reaches the brain
+	// (REAim.BrainSlitPitch), as Doom's own rocket does when it flies in level.
+	override void HitTarget(Actor shooter, Actor target)
+	{
+		let rocket = shooter.SpawnPlayerMissile("RERocket");
+		if (rocket == null || !(target is "BossBrain")) return;
+		bool open;
+		double pitch;
+		// clearance: half the rocket, plus 4 for the height GZDoom checks it at before each 40-unit step
+		[open, pitch] = REAim.BrainSlitPitch(shooter, target, rocket.pos.z - shooter.pos.z + rocket.Height / 2, rocket.Height / 2 + 4);
+		if (!open) return;
+		double ang = shooter.AngleTo(target);
+		rocket.Angle = ang;
+		rocket.Pitch = pitch;
+		rocket.Vel3DFromAngle(rocket.Speed, ang, pitch);
+	}
 
 	// A fast rocket. Its blast never hurts Jill.
 	override void Miss(Actor shooter)
@@ -1208,7 +1224,7 @@ class REFlamethrowerPickup : REPickup
 	bool Convert()
 	{
 		if (bDestroyed) return true;
-		let pmo = REMain.Player();
+		let pmo = players[consoleplayer].mo;
 		if (!bDropped && (pmo == null || pmo is "REChrisPlayer" || re_cheat_jillflame)) return false;
 		let clip = Actor.Spawn("REChaingunClipPickup", pos, ALLOW_REPLACE);
 		if (clip != null) { clip.bDropped = bDropped; clip.Angle = REPickup.FloorAngle(clip); }
@@ -1406,7 +1422,10 @@ class REAim play
 			if (mo is "BossBrain")
 			{
 				double eye = shooter.player != null ? min(shooter.player.viewheight, 41.0) : shooter.Height * 0.75;   // see AimDir
-				if (!BrainOpenFrom(shooter, mo, eye)) continue;
+				bool open;
+				double slitPitch;
+				[open, slitPitch] = BrainSlitPitch(shooter, mo, eye);
+				if (!open) continue;
 			}
 			else if (!shooter.CheckSight(mo)) continue;
 			double dist = d.Length();
@@ -1461,6 +1480,43 @@ class REAim play
 		if (re_debugcams && from.player != null)
 			Console.Printf("Icon brain: %s (trace %.0f of %.0f, brain health %d)", open ? "in reach" : "blocked", t.Distance, dist, brain.health);
 		return open;
+	}
+
+	// The same slit, for shots: a straight line from 'from' (zOfs above its feet)
+	// that goes in through the slit and ends within a rocket blast of the brain.
+	// In Doom that's the only way to hurt it: a rocket that flies in level while
+	// the lift rises past the slit, then explodes just behind the brain. From
+	// the top of the lift a level rocket hits the wall above the slit, so the
+	// line may tilt (12 degrees up to 12 down, in quarter degrees); the one
+	// ending closest to the brain wins. 'clearance' (half a rocket's height)
+	// keeps the whole rocket inside the slit. Returns the pitch.
+	const BRAIN_BLAST_REACH = 112;   // a rocket's 128 (Doom's old splash measure, as the brain uses), with a margin
+
+	static bool, double BrainSlitPitch(Actor from, Actor brain, double zOfs, double clearance = 0)
+	{
+		double ang = from.AngleTo(brain);
+		double range = from.Distance2D(brain) + 256;
+		// every pitch that works; the shot takes the middle one, furthest from
+		// the slit's edges
+		Array<double> good;
+		for (double pitch = -12; pitch <= 12; pitch += 0.25)
+		{
+			bool ok = true;
+			for (int k = -1; k <= 1 && ok; k++)
+			{
+				if (k != 0 && clearance <= 0) continue;
+				FLineTraceData t;
+				from.LineTrace(ang, range, pitch, TRF_THRUACTORS, zOfs + k * clearance, data: t);
+				Vector2 d = t.HitLocation.xy - brain.pos.xy;
+				if (max(abs(d.x), abs(d.y)) - brain.radius > BRAIN_BLAST_REACH) ok = false;
+			}
+			if (ok) good.Push(pitch);
+		}
+		bool found = good.Size() > 0;
+		double best = found ? good[good.Size() / 2] : 0;
+		if (re_debugcams && from.player != null)
+			Console.Printf("Icon brain: %s", found ? String.Format("shot through the slit at pitch %.2f (%.2f to %.2f work)", best, good[0], good[good.Size() - 1]) : "no way through the slit");
+		return found, best;
 	}
 
 	static void Hit(Actor attacker, Actor target, int damage)

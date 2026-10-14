@@ -148,7 +148,7 @@ class REItemBoxHandler : EventHandler
 	override void WorldLoaded(WorldEvent e)
 	{
 		if (e.IsSaveGame) return;   // the box was saved with the map
-		let pmo = REMain.Player();
+		let pmo = players[consoleplayer].mo;
 		if (pmo == null) return;
 		startPickups.Clear();
 		MergeStacked();
@@ -328,7 +328,7 @@ class REItemBoxHandler : EventHandler
 
 	void FinishStart(PlayerPawn pmo)
 	{
-		let cam = REFixedCamera(players[REMain.Number()].camera);
+		let cam = REFixedCamera(players[consoleplayer].camera);
 		if (pmo == null || cam == null) { startPickups.Clear(); startTw = null; startBox = null; startRib = null; return; }
 		if (re_debugcams && startTw != null && startBox != null)
 			Console.Printf("start props: tw (%.0f,%.0f) %d, box (%.0f,%.0f) %d, cam (%.0f,%.0f,%.0f) ang %.0f", startTw.pos.x, startTw.pos.y, Visible(cam, startTw), startBox.pos.x, startBox.pos.y, Visible(cam, startBox), cam.pos.x, cam.pos.y, cam.pos.z, cam.Angle);
@@ -346,7 +346,7 @@ class REItemBoxHandler : EventHandler
 			{
 				let ch = RECameraHandler(EventHandler.Find("RECameraHandler"));
 				moved = ch != null && ch.FrameStartProps(pmo, startBox, startTw);
-				if (moved) cam = REFixedCamera(players[REMain.Number()].camera);
+				if (moved) cam = REFixedCamera(players[consoleplayer].camera);
 			}
 			if (moved && startRib != null)
 			{
@@ -375,7 +375,7 @@ class REItemBoxHandler : EventHandler
 			{
 				let ch = RECameraHandler(EventHandler.Find("RECameraHandler"));
 				bool found = ch != null && ch.FrameStartProps(pmo, box, tw, false);
-				if (found) cam = REFixedCamera(players[REMain.Number()].camera);
+				if (found) cam = REFixedCamera(players[consoleplayer].camera);
 				if (re_debugcams) Console.Printf("hand-placed start: %s", found ? "another camera shows the box and typewriter" : "no camera shows both side by side");
 			}
 		}
@@ -1064,7 +1064,7 @@ class REStartLayoutHandler : EventHandler
 	override void WorldLoaded(WorldEvent e)
 	{
 		if (e.IsSaveGame) return;
-		let pmo = REMain.Player();
+		let pmo = players[consoleplayer].mo;
 		if (pmo == null) return;
 		if (re_debugcams) Console.Printf("start layout: %s, tic %d", level.MapName, level.maptime);
 
@@ -1106,7 +1106,7 @@ class REStartLayoutHandler : EventHandler
 		let ch = RECameraHandler(EventHandler.Find("RECameraHandler"));
 		if (ch != null) ch.PickOpening(pmo);
 		// the partner right in front of the lens: another spot by the player
-		let cam = players[REMain.Number()].camera;
+		let cam = players[consoleplayer].camera;
 		if (pt != null && !ptPlaced && cam != null && cam != pmo && (REPartnerHandler.NearLens(pt, cam) || REPartnerHandler.HidesFromCamera(pt, pmo, cam)))
 		{
 			bool ok = REPartnerHandler.Place(pt, pmo, cam);
@@ -1149,7 +1149,7 @@ class REStartLayoutHandler : EventHandler
 
 	void Snapshot(Actor pmo)
 	{
-		let cam = players[REMain.Number()].camera;
+		let cam = players[consoleplayer].camera;
 		if (cam != null) { snapCamPos = cam.pos; snapCamAngle = cam.Angle; snapCamFov = cam.CameraFOV; }
 		snapPlayer = (pmo.pos.x, pmo.pos.y, pmo.pos.z + pmo.Height * 0.5);
 		int unsafe = 0;
@@ -1203,11 +1203,11 @@ class REStartLayoutHandler : EventHandler
 				Console.Printf("STARTMOVED %s %s from (%.0f, %.0f) to (%.0f, %.0f), angle %.0f -> %.0f", level.MapName, a.GetClassName(), snapX[i], snapY[i], a.pos.x, a.pos.y, snapA[i], a.Angle);
 			}
 		}
-		let cam = players[REMain.Number()].camera;
+		let cam = players[consoleplayer].camera;
 		bool camMoved = cam == null || (cam.pos - snapCamPos).Length() > 1 || abs(Actor.DeltaAngle(cam.Angle, snapCamAngle)) > 0.5 || abs(cam.CameraFOV - snapCamFov) > 0.3;
 		if (camMoved && cam != null) Console.Printf("STARTMOVED %s camera from (%.0f, %.0f, %.0f) %.0f fov %.0f to (%.0f, %.0f, %.0f) %.0f fov %.0f", level.MapName,
 			snapCamPos.x, snapCamPos.y, snapCamPos.z, snapCamAngle, snapCamFov, cam.pos.x, cam.pos.y, cam.pos.z, cam.Angle, cam.CameraFOV);
-		let pmo = REMain.Player();
+		let pmo = players[consoleplayer].mo;
 		if (camMoved && pmo != null) Console.Printf("STARTMOVED %s player middle from (%.1f, %.1f, %.1f) to (%.1f, %.1f, %.1f)", level.MapName,
 			snapPlayer.x, snapPlayer.y, snapPlayer.z, pmo.pos.x, pmo.pos.y, pmo.pos.z + pmo.Height * 0.5);
 		Console.Printf("STARTCHECK %s: %d moved, camera %s", level.MapName, moved, camMoved ? "MOVED" : "still");

@@ -87,7 +87,9 @@ Pick who you play; the other one follows you and fights.
 - The partner can't be hurt, never runs out of ammo, and you can walk through
   each other. They open normal doors to keep up, key doors while you carry
   the key, and secret doors you've already found, but never switches or
-  lifts. They crawl through low gaps on hands and knees, like you.
+  lifts. They crawl through low gaps on hands and knees, like you, and jump up
+  onto ledges you jumped onto. If they're stuck somewhere they can't get out of
+  (a deep pit), they catch up with you after a few seconds.
 - To give them a better gun, stand close, open the inventory, pick the gun and
   choose **GIVE TO**. They hand you back the gun they had.
 - **Settings > Gameplay > AI partner:** Off means no partner and no BOTH
@@ -102,21 +104,6 @@ Pick who you play; the other one follows you and fights.
 - **Settings > Gameplay > Flat corpses:** dead monsters lie flat on the floor
   instead of turning to face you, so you can walk around them. First person
   only (default), both views, or Off for Doom's usual corpses.
-
-**Online co-op:** two players on two computers. Both start `play.bat`
-(Mac: `play.command`), then **main menu > Online**: the host picks the
-**Starting level** (by name, with pictures) and **Start hosting** (plays Jill); the friend types the **Host's address** and picks
-**Join** (plays Chris). GZDoom closes and starts again online; when the online
-game ends, you're back at the title screen. (The launch menu's **2 Host** and
-**3 Join** do the same; the README explains which address.) Both need the same Resident
-Doom, the same DOOM II (setup prints its file ID) and the same kind of computer
-(Windows with Windows, Mac with Mac).
-- Each player has their own camera, inventory, item box, health and herbs.
-- **No saving online:** typewriters and F6 say so. If you die, press Space or
-  E to come back at the level start with what you had when you got there.
-- The game doesn't pause for the inventory, map or menu.
-- The host's settings apply to both. No AI partner, records or cheats online;
-  flat corpses set to "first person only" show in both views.
 
 ## Items
 

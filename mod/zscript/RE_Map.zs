@@ -415,19 +415,10 @@ class REMapKeyHandler : EventHandler
 
 	override void WorldTick()
 	{
-		// One list per player (player p's rooms start at p * sector count), so in
-		// online co-op each map screen shows its own player's rooms.
-		int n = level.Sectors.Size();
-		for (int p = 0; p < MAXPLAYERS; p++)
-		{
-			if (!playeringame[p]) continue;
-			let pmo = players[p].mo;
-			if (pmo == null || pmo.CurSector == null) continue;
-			if (p > 0 && visited.Size() < n * MAXPLAYERS)
-				for (int k = visited.Size(); k < n * MAXPLAYERS; k++) visited.Push(false);
-			int i = p * n + pmo.CurSector.Index();
-			if (i < visited.Size()) visited[i] = true;
-		}
+		let pmo = players[consoleplayer].mo;
+		if (pmo == null || pmo.CurSector == null) return;
+		int i = pmo.CurSector.Index();
+		if (i < visited.Size()) visited[i] = true;
 		let partner = REPartner.Find();
 		hasPartner = partner != null;
 		if (hasPartner) { partnerPos = partner.pos.xy; partnerAngle = partner.Angle; partnerName = partner.GetTag(); }
@@ -439,14 +430,7 @@ class REMapKeyHandler : EventHandler
 	double partnerAngle;
 	String partnerName;
 
-	// Rooms of the player at this computer (the map screen is a screen, so consoleplayer is right).
-	clearscope bool WasIn(int i)
-	{
-		int n = level.Sectors.Size();
-		if (i < 0 || i >= n) return false;
-		i += consoleplayer * n;
-		return i < visited.Size() && visited[i];
-	}
+	clearscope bool WasIn(int i) { return i >= 0 && i < visited.Size() && visited[i]; }
 
 	override bool InputProcess(InputEvent e)
 	{

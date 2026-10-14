@@ -51,9 +51,7 @@ from **your own copies** of the games.
 
    Nothing is installed on your PC, and your game folders are only read.
    Everything setup prints is also saved in `setup-log.txt`.
-4. **Double-click `play.bat`** to play. A small menu opens: press **Enter**
-   to play (or pick online co-op, see [Online co-op](#online-co-op-2-players)).
-   While you play, it waits minimized in the taskbar and closes when you quit.
+4. **Double-click `play.bat`** to play.
 
 If Windows says "Windows protected your PC" for `setup.bat` or `play.bat`,
 click **More info** > **Run anyway** (that message appears for any downloaded
@@ -88,9 +86,7 @@ Mac. So the game files come from a Windows PC where they're installed:
    the converter. If macOS asks whether GZDoom may use files in your Documents
    folder, click **OK**.
 5. To play: double-click **`play.command`** (the first time: right-click >
-   **Open**), or type `bash play.command` in Terminal. A small menu opens in
-   Terminal: press **Return** to play (or pick online co-op). Leave the Terminal
-   window open while you play; it's done when you quit the game.
+   **Open**), or type `bash play.command` in Terminal.
 
 The first time, macOS may ask to let GZDoom control your computer using
 accessibility features. Click **Deny**; the game doesn't need it. macOS
@@ -108,7 +104,7 @@ and may not work.
 
 | | |
 |---|---|
-| `play.bat` / `play.command` | a small menu: **1 Play** (or just Enter), **2 Host online co-op**, **3 Join online co-op**. Play opens the title screen: press **Enter**, then **New Game**: pick Jill, Chris or Both (AI partner), then Doom II's levels or "Mansion - (custom level)". |
+| `play.bat` / `play.command` | the title screen. Press **Enter**, then **New Game**: pick Jill, Chris or Both (AI partner), then Doom II's levels or "Mansion - (custom level)". |
 | `play_doom2.bat` / `.command` | straight into Doom II's MAP01, as Jill |
 | `play_mansion.bat` / `.command` | straight into the mansion map, as Jill |
 
@@ -157,66 +153,7 @@ On the character select screen, **Both** gives you a partner: pick who you play,
 and the other one follows you and fights. They can't be hurt and never run out
 of ammo. They open normal doors, key doors while you carry the key, and secret
 doors you've found. Give them a better gun with **GIVE TO** in the inventory.
-
-### Online co-op (2 players)
-
-Two people, two computers: the **host** plays **Jill**, the friend who joins
-plays **Chris**. Each has their own camera, inventory, health and herbs. There's
-no AI partner online.
-
-**Before you start, both players need:**
-- the **same Resident Doom** (download it again if one of you has an older copy);
-- the **same DOOM II**. Setup prints `Your DOOM II version: ... (file ID ...)`;
-  compare the two lines (also in `setup-log.txt`). They must match;
-- **the same kind of computer:** Windows with Windows, or Mac with Mac.
-  Windows with Mac may slowly go out of step (see below).
-
-**To play, in the game:** start the game with **`play.bat`** (Mac:
-`play.command`) as usual, then **main menu > Online**:
-1. The host picks the **Starting level** (Enter opens the Level Select pictures:
-   "1. Entryway", "7. Dead Simple"..., Enter picks one), then **Start hosting**,
-   then **Y**. GZDoom closes and starts again, showing **"Hosting game 1/2"** until the friend has joined. The
-   Online page shows the host's address on the same Wi-Fi ("Friends type: ...").
-   If Windows Firewall asks about GZDoom, click **Allow** (Private networks).
-2. The friend types the **Host's address** (press Enter on it, type, Enter
-   again), picks **Join**, then **Y**. The level starts for both.
-
-**Or from the launch menu:** in the small menu `play.bat` / `play.command` show
-first, the host types **2** (Host online co-op): it starts at the first level
-(Entryway) and prints the addresses your friend can use. The friend types **3**
-(Join online co-op) and the host's address.
-
-**When the online game ends** (you quit, or the host clicks **Abort Network
-Game** while waiting), the normal game starts again at the title screen. Quit
-that as usual to stop playing. While you play, `play.bat` waits minimized in
-the taskbar as "Resident Doom launcher" (on a Mac, the Terminal window stays
-open): that's what starts the game again. Online only works when the game was
-started with `play.bat` / `play.command`.
-
-**Which address?**
-- **Same house, same Wi-Fi:** the host's local address, which the Online page and
-  the launch menu show (looks like `192.168.1.20`).
-- **Over the internet, easiest:** both install **Tailscale** (free, tailscale.com)
-  and sign in to the same Tailscale network. The friend types the host's
-  Tailscale address (looks like `100.64.0.5`). No router changes.
-- **Over the internet, without Tailscale:** the host forwards **UDP port 5029**
-  on their router to their computer, and the friend types the host's public
-  address (search "what is my IP" on the host's computer).
-
-**Good to know:**
-- **No saving online.** Typewriters and F6 say "No saving in online co-op".
-  The host can start any level from the beginning (Online > Starting level).
-- If you die, press Space or E: you come back at the level start with what you
-  carried when you got there. Your friend plays on.
-- The game doesn't pause when one of you opens the inventory, map or menu.
-- The **host's** settings (save mode, lighting, inventory style, starting view,
-  jump, crouch...) apply to both players.
-- Records, cheats and the custom ending are single player only.
-- **If it keeps waiting:** the host must start first; check the address; on
-  the internet, check Tailscale or the port forward; check the firewall.
-- **"Out of sync" or the players are in different places on the two screens:**
-  quit both and start again. If it happens with Windows + Mac, play Windows
-  with Windows or Mac with Mac.
+(There's no online co-op: the partner is the computer.)
 
 ### Cheats
 
@@ -233,7 +170,7 @@ Weapons), or console codes (~): `starsteam`, `rocketman`, `jillsandwich`,
   shows DOOM II's logo.
 - Doom II's monsters are still Doom's monsters (with RE1-style corpses and poison).
 - The mansion map has no exit yet (so no record for it).
-- Online co-op is 2 players, without saving (see [Online co-op](#online-co-op-2-players)).
+- Online co-op: not available yet. Single player only; the "co-op" is the AI partner.
 - **Mac:** the game files must come from a Windows install (see above).
   CapsLock (always run) may behave differently, F6 may need the **fn** key,
   and on a trackpad, aim with a two-finger click or Ctrl.

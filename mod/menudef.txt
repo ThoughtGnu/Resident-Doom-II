@@ -27,7 +27,6 @@ ListMenu "MainMenu"
 	TextItem "Save Game", "s", "SaveGameMenu"
 	TextItem "Settings", "e", "RESettingsMenu"
 	TextItem "Extras", "x", "REExtrasMenu"
-	REOnlineItem "Online", "o", "REOnlineMenu"   // RE_Online.zs
 	TextItem "Quit Game", "q", "QuitMenu"
 	REIngameItem "Main Menu", "m", "EndGameMenu"
 }
@@ -45,7 +44,6 @@ ListMenu "REMainMenuTitle"
 	TextItem "Save Game", "s", "SaveGameMenu"
 	TextItem "Settings", "e", "RESettingsMenu"
 	TextItem "Extras", "x", "REExtrasMenu"   // over the title picture it adds a dark layer (RE_Title.zs)
-	REOnlineItem "Online", "o", "REOnlineMenu"   // RE_Online.zs
 	TextItem "Quit Game", "q", "QuitMenu"
 }
 // The same, for when GZDoom shows its menus as text (other languages).
@@ -62,7 +60,6 @@ ListMenu "MainMenuTextOnly"
 	TextItem "Save Game", "s", "SaveGameMenu"
 	TextItem "Settings", "e", "RESettingsMenu"
 	TextItem "Extras", "x", "REExtrasMenu"
-	REOnlineItem "Online", "o", "REOnlineMenu"   // RE_Online.zs
 	TextItem "Quit Game", "q", "QuitMenu"
 	REIngameItem "Main Menu", "m", "EndGameMenu"
 }
@@ -256,32 +253,4 @@ OptionMenu "RECheatListMenu"
 {
 	Class "RECheatListMenu"
 	Title "CHEAT LIST"
-}
-
-// Main menu > Online (zscript/RE_Online.zs): host or join online co-op. Start hosting
-// and Join close GZDoom after a yes/no question (keyconf.txt re_online_host / join);
-// play.bat / play.command then start it again online. Labels stay short (see the Cheats menu above).
-OptionMenu "REOnlineMenu"
-{
-	Class "REOnlineMenu"
-	Title "ONLINE CO-OP"
-	StaticText "Host: you play Jill, your friend joins as Chris.", 1
-	REHostLevel "Starting level", "REHostLevelMenu"   // RE_Online.zs: the name, Enter picks it
-	SafeCommand "Start hosting", "re_online_host", "$RE_ONLINE_HOSTQ"
-	REOnlineAddress "Friends type"
-	StaticText " "
-	TextField "Host's address", "re_net_address"
-	SafeCommand "Join", "re_online_join", "$RE_ONLINE_JOINQ"
-	StaticText " "
-	StaticText "GZDoom closes and starts again online.", 1
-	StaticText "When it ends, you're back at the title screen.", 1
-	StaticText "Over the internet: README, Online co-op.", 1
-}
-
-// Online > Starting level: the Level Select screen as a picker (RE_LevelSelect.zs REHostLevelMenu).
-OptionMenu "REHostLevelMenu"
-{
-	Class "REHostLevelMenu"
-	Title "STARTING LEVEL"
-	StaticText " "
 }
