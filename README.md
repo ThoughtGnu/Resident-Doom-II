@@ -1,4 +1,4 @@
-# Resident Doom
+# Resident Doom: Resident Evil 1 × Doom II
 
 **Resident Evil 1, played through DOOM II.** Jill Valentine and Chris Redfield,
 with their real models and animations from the 1996 PC game, explore DOOM II's
@@ -104,12 +104,16 @@ and may not work.
 
 | | |
 |---|---|
-| `play.bat` / `play.command` | the title screen. Press **Enter**, then **New Game**: pick Jill, Chris or Both (AI partner), then Doom II's levels or "Mansion - (custom level)". |
+| `play.bat` / `play.command` | the title screen. Press **Enter**, then **New Game**: pick Jill, Chris or Both (AI partner), third or first person, then Doom II's levels or "Mansion - (custom level)". |
 | `play_doom2.bat` / `.command` | straight into Doom II's MAP01, as Jill |
 | `play_mansion.bat` / `.command` | straight into the mansion map, as Jill |
 
 Add `+playerclass Chris` to start the last two as Chris (for example
 `play_doom2.bat +playerclass Chris`).
+
+**Level Select** (main menu) starts any Doom II map, the mansion, or **FINAL
+BOSS**: the Icon of Sin on MAP30, starting on the arena's lift. Press **E** to
+raise the lift, then aim at the brain and fire.
 
 **The [Player Manual](MANUAL.md)** explains everything: controls, characters,
 items, weapons, saving, lighting, records and cheats. It's also in the game:
@@ -123,7 +127,7 @@ items, weapons, saving, lighting, records and cheats. It's also in the game:
 | Left, Right / A, D | turn |
 | Shift (hold) | run; **CapsLock** switches always-run on / off |
 | Ctrl or right mouse (hold) | aim; **E** fires; Up / Down aims up / down |
-| E | pick up, open doors, typewriters and the item box |
+| E | pick up, open doors, switches and lifts, typewriters and the item box |
 | Tab / I | inventory (equip, use, combine, give to your partner) |
 | M | map screen |
 | V | first person (mouse to look, Q / R to step sideways) / fixed cameras |
@@ -147,13 +151,13 @@ Keys come from `keys.cfg` every time the game starts; edit it to change them.
 
 Field of view: Settings > Video > Field of View.
 
-### Co-op: the AI partner
+### The AI partner
 
 On the character select screen, **Both** gives you a partner: pick who you play,
 and the other one follows you and fights. They can't be hurt and never run out
 of ammo. They open normal doors, key doors while you carry the key, and secret
 doors you've found. Give them a better gun with **GIVE TO** in the inventory.
-(There's no online co-op: the partner is the computer.)
+(The partner is always the computer: there's no online co-op.)
 
 ### Cheats
 
@@ -170,7 +174,7 @@ Weapons), or console codes (~): `starsteam`, `rocketman`, `jillsandwich`,
   shows DOOM II's logo.
 - Doom II's monsters are still Doom's monsters (with RE1-style corpses and poison).
 - The mansion map has no exit yet (so no record for it).
-- Online co-op: not available yet. Single player only; the "co-op" is the AI partner.
+- Single player only: there's no online co-op (the partner in **Both** is the computer).
 - **Mac:** the game files must come from a Windows install (see above).
   CapsLock (always run) may behave differently, F6 may need the **fn** key,
   and on a trackpad, aim with a two-finger click or Ctrl.
