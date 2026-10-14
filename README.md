@@ -31,10 +31,13 @@ from **your own copies** of the games.
 
 1. **Install both games** from GOG / Steam as usual (if they aren't already).
 2. **Get Resident Doom:** on the repository's GitHub page, click the green
-   **Code** button > **Download ZIP**. Right-click the downloaded zip >
-   **Properties** > tick **Unblock** if you see it > OK. Then right-click > **Extract All**
-   to a simple folder, for example `C:\Games\Resident-Doom`. (Not inside
-   `Program Files`, which Windows protects.)
+   **Code** button > **Download ZIP**. **Don't double-click the zip** (that
+   opens it like a folder and hides the Unblock box). Instead, in Downloads,
+   right-click the zip > **Properties** > tick **Unblock** if you see it > OK.
+   Then right-click the zip > **Extract All** to a simple folder, for example
+   `C:\Games\Resident-Doom`. (Not inside `Program Files`, which Windows protects.)
+   The files end up one folder deeper, for example
+   `C:\Games\Resident-Doom\Resident-Doom-main`; `setup.bat` is inside that folder.
 3. **Double-click `setup.bat`** in that folder. It:
    - finds your Resident Evil and doom2.wad by itself. If it can't, it asks you
      to pick them: the **Resident Evil folder** (the one with `ResidentEvil.exe`
@@ -84,6 +87,10 @@ Mac. So the game files come from a Windows PC where they're installed:
    folder, click **OK**.
 5. To play: double-click **`play.command`** (the first time: right-click >
    **Open**), or type `bash play.command` in Terminal.
+
+The first time, macOS may ask to let GZDoom control your computer using
+accessibility features. Click **Deny**; the game doesn't need it. macOS
+remembers and won't ask again.
 
 **Mac: hold Control to aim and press E to fire. On a trackpad, a two-finger click also aims.**
 
