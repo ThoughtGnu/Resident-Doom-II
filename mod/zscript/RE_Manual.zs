@@ -92,7 +92,7 @@ class REManualMenu : GenericMenu
 
 		"@1|Online co-op",
 		"#TWO PLAYERS, TWO COMPUTERS",
-		"Both start play.bat (Mac: play.command). The host picks 2 Host online co-op (Jill); the friend picks 3 Join online co-op (Chris) and types the host's address. README.md explains the addresses.",
+		"Both start play.bat (Mac: play.command), then main menu > Online. The host picks the Starting level and Start hosting (Jill); the friend types the Host's address and picks Join (Chris). GZDoom closes and starts again online.",
 		"",
 		"Both need the same Resident Doom, the same DOOM II (setup prints its file ID) and the same kind of computer (Windows with Windows, Mac with Mac).",
 		"*",
@@ -102,6 +102,7 @@ class REManualMenu : GenericMenu
 		"Saving|none: typewriters and F6 say so",
 		"Dying|Space or E: back at the level start",
 		"Settings|the host's apply to both",
+		"Ending|quit (or Abort while waiting): back to the title screen",
 		"!The game doesn't pause for the inventory, map or menu. No AI partner, records or cheats online.",
 
 		"@2|Herbs, healing and poison",

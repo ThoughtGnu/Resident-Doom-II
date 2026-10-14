@@ -31,6 +31,11 @@ alias jillsandwich. "netevent re_cheatcode 2"
 alias inkribbon "netevent re_cheatcode 3"
 alias inkribbon. "netevent re_cheatcode 3"
 
+// Main menu > Online (RE_Online.zs, menudef.txt REOnlineMenu): save the choice, then quit
+// normally (which writes the settings file); play.bat / play.command start GZDoom again online.
+alias re_online_host "re_net_request host; quit"
+alias re_online_join "re_net_request join; quit"
+
 addkeysection "Resident Doom" ResidentDoom
 addmenukey "Inventory screen" re_inventory
 addmenukey "Aim (hold)" +user1

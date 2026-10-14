@@ -104,9 +104,11 @@ Pick who you play; the other one follows you and fights.
   only (default), both views, or Off for Doom's usual corpses.
 
 **Online co-op:** two players on two computers. Both start `play.bat`
-(Mac: `play.command`). The host picks **2 Host online co-op** and plays Jill;
-the friend picks **3 Join online co-op**, types the host's address and plays
-Chris (the README explains which address). Both need the same Resident
+(Mac: `play.command`), then **main menu > Online**: the host picks the
+**Starting level** (by name, with pictures) and **Start hosting** (plays Jill); the friend types the **Host's address** and picks
+**Join** (plays Chris). GZDoom closes and starts again online; when the online
+game ends, you're back at the title screen. (The launch menu's **2 Host** and
+**3 Join** do the same; the README explains which address.) Both need the same Resident
 Doom, the same DOOM II (setup prints its file ID) and the same kind of computer
 (Windows with Windows, Mac with Mac).
 - Each player has their own camera, inventory, item box, health and herbs.

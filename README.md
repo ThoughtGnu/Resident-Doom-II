@@ -53,6 +53,7 @@ from **your own copies** of the games.
    Everything setup prints is also saved in `setup-log.txt`.
 4. **Double-click `play.bat`** to play. A small menu opens: press **Enter**
    to play (or pick online co-op, see [Online co-op](#online-co-op-2-players)).
+   While you play, it waits minimized in the taskbar and closes when you quit.
 
 If Windows says "Windows protected your PC" for `setup.bat` or `play.bat`,
 click **More info** > **Run anyway** (that message appears for any downloaded
@@ -88,7 +89,8 @@ Mac. So the game files come from a Windows PC where they're installed:
    folder, click **OK**.
 5. To play: double-click **`play.command`** (the first time: right-click >
    **Open**), or type `bash play.command` in Terminal. A small menu opens in
-   Terminal: press **Return** to play (or pick online co-op).
+   Terminal: press **Return** to play (or pick online co-op). Leave the Terminal
+   window open while you play; it's done when you quit the game.
 
 The first time, macOS may ask to let GZDoom control your computer using
 accessibility features. Click **Deny**; the game doesn't need it. macOS
@@ -169,18 +171,31 @@ no AI partner online.
 - **the same kind of computer:** Windows with Windows, or Mac with Mac.
   Windows with Mac may slowly go out of step (see below).
 
-**To play:**
-1. The host double-clicks **`play.bat`** (Mac: `play.command`), types **2**
-   (Host online co-op) and presses Enter, then Enter again for MAP01 (or types
-   another map, for example `MAP07`). It prints the addresses your friend can
-   use. If Windows Firewall asks about GZDoom, click **Allow** (Private
-   networks). GZDoom waits for your friend.
-2. The friend double-clicks **`play.bat`** (Mac: `play.command`), types **3**
-   (Join online co-op), then the host's address. The level starts for both.
+**To play, in the game:** start the game with **`play.bat`** (Mac:
+`play.command`) as usual, then **main menu > Online**:
+1. The host picks the **Starting level** (Enter opens the Level Select pictures:
+   "1. Entryway", "7. Dead Simple"..., Enter picks one), then **Start hosting**,
+   then **Y**. GZDoom closes and starts again, showing **"Hosting game 1/2"** until the friend has joined. The
+   Online page shows the host's address on the same Wi-Fi ("Friends type: ...").
+   If Windows Firewall asks about GZDoom, click **Allow** (Private networks).
+2. The friend types the **Host's address** (press Enter on it, type, Enter
+   again), picks **Join**, then **Y**. The level starts for both.
+
+**Or from the launch menu:** in the small menu `play.bat` / `play.command` show
+first, the host types **2** (Host online co-op): it starts at the first level
+(Entryway) and prints the addresses your friend can use. The friend types **3**
+(Join online co-op) and the host's address.
+
+**When the online game ends** (you quit, or the host clicks **Abort Network
+Game** while waiting), the normal game starts again at the title screen. Quit
+that as usual to stop playing. While you play, `play.bat` waits minimized in
+the taskbar as "Resident Doom launcher" (on a Mac, the Terminal window stays
+open): that's what starts the game again. Online only works when the game was
+started with `play.bat` / `play.command`.
 
 **Which address?**
-- **Same house, same Wi-Fi:** the host's local address, which the host's
-  menu prints (looks like `192.168.1.20`).
+- **Same house, same Wi-Fi:** the host's local address, which the Online page and
+  the launch menu show (looks like `192.168.1.20`).
 - **Over the internet, easiest:** both install **Tailscale** (free, tailscale.com)
   and sign in to the same Tailscale network. The friend types the host's
   Tailscale address (looks like `100.64.0.5`). No router changes.
@@ -190,7 +205,7 @@ no AI partner online.
 
 **Good to know:**
 - **No saving online.** Typewriters and F6 say "No saving in online co-op".
-  The host can start any map from the beginning (Host, then type the map).
+  The host can start any level from the beginning (Online > Starting level).
 - If you die, press Space or E: you come back at the level start with what you
   carried when you got there. Your friend plays on.
 - The game doesn't pause when one of you opens the inventory, map or menu.

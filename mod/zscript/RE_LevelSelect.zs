@@ -27,6 +27,11 @@ class RELevelSelectMenu : OptionMenu
 
 	const ROWS = 16;
 
+	// Main menu > Online > Starting level uses this screen too, as a picker
+	// (REHostLevelMenu below): Doom II's levels only, named "7. Dead Simple",
+	// no character, and Enter picks the level instead of starting it.
+	virtual bool Picker() { return false; }
+
 	override void Init(Menu parent, OptionMenuDescriptor desc)
 	{
 		// The level items are added once, to the menu's description.
@@ -38,10 +43,14 @@ class RELevelSelectMenu : OptionMenu
 				if (!LevelInfo.MapExists(map)) continue;
 				let info = LevelInfo.FindLevelInfo(map);
 				String name = info != null ? info.LookupLevelName() : map;
-				Add(desc, String.Format("%s  %s", map, name), "map " .. map, String.Format("LV%02d", i), map);
+				String label = Picker() ? REOnlineNames.LevelText(map) : String.Format("%s  %s", map, name);
+				Add(desc, label, "map " .. map, String.Format("LV%02d", i), map);
 			}
-			Add(desc, "Mansion - (custom level)", "map REMAP01", "LVRE", "REMAP01");
-			Add(desc, "FINAL BOSS - Icon of Sin", "re_bossfight", "LVBOSS", "MAP30");
+			if (!Picker())
+			{
+				Add(desc, "Mansion - (custom level)", "map REMAP01", "LVRE", "REMAP01");
+				Add(desc, "FINAL BOSS - Icon of Sin", "re_bossfight", "LVBOSS", "MAP30");
+			}
 		}
 		Super.Init(parent, desc);
 		pics.Clear(); maps.Clear();
@@ -55,6 +64,12 @@ class RELevelSelectMenu : OptionMenu
 		charPic[1] = TexMan.CheckForTexture("CARDCHRS", TexMan.Type_Any);
 		// open on a level (Enter does nothing on the character row)
 		if (mDesc.mSelectedItem < 1) mDesc.mSelectedItem = 1;
+		// the picker opens on the level picked before
+		if (Picker())
+		{
+			String cur = CVar.FindCVar('re_net_map').GetString();
+			for (int i = 1; i < maps.Size(); i++) if (maps[i] ~== cur) mDesc.mSelectedItem = i;
+		}
 	}
 
 	void Add(OptionMenuDescriptor desc, String label, String cmd, String pic, String map)
@@ -73,6 +88,21 @@ class RELevelSelectMenu : OptionMenu
 	// character added stands in for it while it runs.
 	override bool MenuEvent(int mkey, bool fromcontroller)
 	{
+		if (Picker())
+		{
+			// Enter picks the highlighted level for hosting (re_net_map) and goes
+			// back to the Online page; there's no character to change.
+			if (mkey == MKEY_Left || mkey == MKEY_Right) return true;
+			int at = mDesc.mSelectedItem;
+			if (mkey == MKEY_Enter && at > 0 && at < maps.Size())
+			{
+				CVar.FindCVar('re_net_map').SetString(maps[at]);
+				MenuSound("menu/choose");
+				Close();
+				return true;
+			}
+			return Super.MenuEvent(mkey, fromcontroller);
+		}
 		// Left / Right switch the character wherever the cursor is.
 		if ((mkey == MKEY_Left || mkey == MKEY_Right) && mDesc.mSelectedItem > 0)
 		{
@@ -129,13 +159,14 @@ class RELevelSelectMenu : OptionMenu
 			int r = int((p.y - 62) / 18);
 			if (p.y >= 62 && r < ROWS && top + 1 + r < n) hit = top + 1 + r;
 		}
+		if (Picker() && hit == 0) hit = -1;   // no character row
 		if (hit >= 0 && hit != mDesc.mSelectedItem)
 		{
 			mDesc.mSelectedItem = hit;
 			MenuSound("menu/cursor");
 		}
 		if (type != MOUSE_Release) return true;
-		bool onCard = p.x >= 330 && p.x < 600 && p.y >= 226 && p.y < 330;
+		bool onCard = !Picker() && p.x >= 330 && p.x < 600 && p.y >= 226 && p.y < 330;
 		if (hit == 0 || onCard)
 		{
 			double mid = hit == 0 ? 170 : 465;
@@ -210,11 +241,12 @@ class RELevelSelectMenu : OptionMenu
 		int sel = mDesc.mSelectedItem;
 		int n = mDesc.mItems.Size();
 
-		Words(BigFont, Font.CR_RED, 20, 10, "LEVEL SELECT");
+		Words(BigFont, Font.CR_RED, 20, 10, Picker() ? "HOST: STARTING LEVEL" : "LEVEL SELECT");
 
-		// Character row
+		// Character row (the picker: who plays whom online)
 		bool onChar = sel == 0;
-		Words(SmallFont, onChar ? Font.CR_GOLD : Font.CR_GRAY, 20, 42,
+		if (Picker()) Words(SmallFont, Font.CR_GRAY, 20, 42, "  You play Jill, your friend joins as Chris.");
+		else Words(SmallFont, onChar ? Font.CR_GOLD : Font.CR_GRAY, 20, 42,
 			String.Format("%sCHARACTER:  < %s >", onChar ? "> " : "  ", CharLabel()));
 
 		// Level list
@@ -245,6 +277,11 @@ class RELevelSelectMenu : OptionMenu
 		if (sel > 0) Words(SmallFont, Font.CR_WHITE, px, py + ph + 6, mDesc.mItems[sel].mLabel);
 		if (sel > 0 && sel < pics.Size() && pics[sel] == "LVBOSS")
 			Words(SmallFont, Font.CR_RED, px, py + ph + 20, "Starts at the Icon. Shoot its brain!");
+		if (Picker())
+		{
+			Words(SmallFont, Font.CR_DARKGRAY, 20, 384, "UP/DOWN choose   ENTER pick this level   ESC back");
+			return;
+		}
 		// The character's ID card (RE1's character-select picture)
 		int lc = LevelChar();
 		if (lc >= 2)
@@ -260,6 +297,13 @@ class RELevelSelectMenu : OptionMenu
 
 		Words(SmallFont, Font.CR_DARKGRAY, 20, 384, "UP/DOWN choose   LEFT/RIGHT character   ENTER start   ESC back");
 	}
+}
+
+// Main menu > Online > Starting level (menudef.txt REHostLevelMenu): the Level
+// Select screen as a picker for the host's first level.
+class REHostLevelMenu : RELevelSelectMenu
+{
+	override bool Picker() { return true; }
 }
 
 // One level in the list: a menu command plus its picture.

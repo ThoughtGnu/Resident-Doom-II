@@ -3,3 +3,6 @@
 [enu default]
 REQUITMSG = "Are you sure you want to quit?";
 ENDGAME ="Return to the main menu?\n\nAre you sure?\nUnsaved progress will be lost.\n\n(Press Y or N.)";
+// Main menu > Online (menudef.txt REOnlineMenu): the question before GZDoom closes and starts again.
+RE_ONLINE_HOSTQ = "GZDoom closes now and starts again as the host\n(you play Jill). Your friend picks Online > Join.\n\n(Press Y or N.)";
+RE_ONLINE_JOINQ = "GZDoom closes now and starts again to join\nthe host's address on this page (you play Chris).\n\n(Press Y or N.)";

@@ -1005,6 +1005,52 @@ code must come out the same on both. The rules the code follows:
   `-config`, the joiner on `127.0.0.1:5029`; a desync shows as a "Consistency
   failure" / out-of-sync message in the console.
 
+### Starting online games: the launcher and main menu > Online
+
+GZDoom sets up online games only when it starts, and ZScript can't start
+programs, so going online from inside the game works by "quit and relaunch":
+
+* **In the game** (`menudef.txt` REOnlineMenu, `RE_Online.zs`, `keyconf.txt`):
+  main menu > **Online** (both main menus) opens Host (Starting level: the name, e.g. "7. Dead Simple", and Enter opens
+  the Level Select screen as a picker, `REHostLevelMenu`; it stores `re_net_map`)
+  and Join (a text field, `re_net_address`, remembered). **Start hosting** and
+  **Join** are plain `SafeCommand` items running the aliases `re_online_host` /
+  `re_online_join` (`re_net_request host|join; quit`). It has to be a plain
+  SafeCommand: GZDoom only lets that exact class run `quit` from a menu (a
+  `Command` item or a subclass gets "Attempt to execute CCMD 'quit' outside of
+  menu code"). The questions are `RE_ONLINE_HOSTQ` / `RE_ONLINE_JOINQ` in
+  `language.txt` (MENUDEF strings don't understand `\n`). The `re_net_*` cvars
+  are `user` cvars, so an online game never replaces a joiner's with the
+  host's.
+* **`re_launcher`** (never remembered) is set only by the launchers
+  (`+set re_launcher 1`, plus `re_net_localip` for the "Friends type" line).
+  Without it (`play_doom2.bat`, GZDoom directly) Online says to start the game
+  with play.bat / play.command; inside an online game it says you're already
+  online.
+* **`play.bat`**: after the launch menu it starts a minimized copy of itself
+  (`play.bat __watch`, "Resident Doom launcher") with the choices in
+  environment variables, so the menu window can close. That copy runs GZDoom
+  with `start /wait`, then `tools\launcher\online.ps1` reads `re_net_request`,
+  `re_net_map` and `re_net_address` from the settings file (sanitized) and
+  **clears the request in the file** (only that line changes). A request starts
+  GZDoom again as host or joiner; after an online game it starts the normal
+  game once; otherwise it ends. A stale request is cleared before the first
+  start, and there are never more than 10 starts per double-click.
+  `RD_CONFIG` (environment) points it at another settings file, for testing
+  two copies on one PC.
+* **`play.command`**: the same in bash, in the Terminal window itself:
+  `open -W -n -a` waits for GZDoom; `sed` reads and clears the request
+  (BSD `sed -i ''`).
+* **Abort Network Game** on the waiting window closes GZDoom quietly (4.14.2,
+  Windows), so the launcher just starts the normal game. If the host quits an
+  online game, the joiner's game carries on until they quit too.
+* Checked on Windows with two copies (host + joiner, each with its own
+  `RD_CONFIG`): Online without the launcher, Play + Quit, in-game Host + Abort,
+  launch-menu Host + in-game Join, launch-menu Host + Join, a killed host and a
+  stale request (no loop); the bash logic with a fake `open` (all paths and the
+  10-start limit). Single-player demos replay identically on the old and new
+  mod.
+
 ## Known limits
 
 * Doom graphics still stand in for the zombie (a zombieman).
