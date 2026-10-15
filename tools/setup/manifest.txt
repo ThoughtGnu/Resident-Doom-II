@@ -264,6 +264,7 @@ models/props/vest.png
 models/props/vest_heavy.iqm
 models/props/vest_light.iqm
 re1status.txt
+sounds/re1/chris01.wav
 sounds/re1/chris04.wav
 sounds/re1/flame01.wav
 sounds/re1/flame02.wav
@@ -275,6 +276,7 @@ sounds/re1/grbomb03.wav
 sounds/re1/grfire02.wav
 sounds/re1/grfire03.wav
 sounds/re1/gun01.wav
+sounds/re1/jill01.wav
 sounds/re1/jill04.wav
 sounds/re1/knife01.wav
 sounds/re1/knife02.wav

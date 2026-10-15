@@ -24,8 +24,8 @@ namespace Re1Convert
     {
         // RE1's sounds the mod plays (mod/sounds/re1, sndinfo.txt)
         static readonly string[] SoundFiles = {
-            "chris04", "flame01", "flame02", "flame03", "gracid02", "gracid03", "grbomb02", "grbomb03", "grfire02", "grfire03",
-            "gun01", "jill04", "knife01", "knife02", "magnum01", "rocket01", "rocket03", "shot01", "shot03" };
+            "chris01", "chris04", "flame01", "flame02", "flame03", "gracid02", "gracid03", "grbomb02", "grbomb03", "grfire02", "grfire03",
+            "gun01", "jill01", "jill04", "knife01", "knife02", "magnum01", "rocket01", "rocket03", "shot01", "shot03" };
 
         // Files the build needs, inside USA (checked before anything is written)
         static readonly string[] NeededFiles = {

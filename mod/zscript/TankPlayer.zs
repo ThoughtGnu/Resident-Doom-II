@@ -53,6 +53,7 @@ class RETankPlayer : DoomPlayer
 	Default
 	{
 		Player.DisplayName "Jill";
+		Player.SoundClass "jill";   // her RE1 hurt and death voice (sndinfo.txt)
 		// First-person eye height: Jill's real eye level, from her RE1 model's
 		// head (re1convert eyes: 45% of the way from the crown to the chin),
 		// at the size the model is drawn (0.0249 map units per RE1 unit,
@@ -675,6 +676,7 @@ class REChrisPlayer : RETankPlayer
 	Default
 	{
 		Player.DisplayName "Chris";
+		Player.SoundClass "chris";   // his RE1 hurt and death voice (sndinfo.txt)
 		Player.ViewHeight 66.6;          // Chris's eye level, standing 2675 RE1 units
 		RETankPlayer.CrouchEye 51.3;     // kneeling 2061
 		Health 140;

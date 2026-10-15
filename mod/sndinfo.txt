@@ -26,3 +26,26 @@ re1/knifehit       sounds/re1/knife02.wav
 // tables: Jill04 / Chris04). Used by the ending cast call (RE_Cast.zs).
 re1/jilldeath      sounds/re1/jill04.wav
 re1/chrisdeath     sounds/re1/chris04.wav
+
+// Their RE1 hurt cry: voice slot 0, which RE1 plays when the player is hit
+// (PlayerAnimations.cpp player_hit_react_common, sndId 0): Jill01 / Chris01.
+re1/jillpain       sounds/re1/jill01.wav
+re1/chrispain      sounds/re1/chris01.wav
+
+// Jill and Chris as the player (Player.SoundClass in TankPlayer.zs): every hurt
+// and every death uses their own RE1 voice instead of Doomguy's. Player sounds
+// not listed here (landing, the "no way" grunt, ...) stay Doom's.
+$playeralias jill  female *pain100    re1/jillpain
+$playeralias jill  female *pain75     re1/jillpain
+$playeralias jill  female *pain50     re1/jillpain
+$playeralias jill  female *pain25     re1/jillpain
+$playeralias jill  female *death      re1/jilldeath
+$playeralias jill  female *xdeath     re1/jilldeath
+$playeralias jill  female *gibbed     re1/jilldeath
+$playeralias chris male   *pain100    re1/chrispain
+$playeralias chris male   *pain75     re1/chrispain
+$playeralias chris male   *pain50     re1/chrispain
+$playeralias chris male   *pain25     re1/chrispain
+$playeralias chris male   *death      re1/chrisdeath
+$playeralias chris male   *xdeath     re1/chrisdeath
+$playeralias chris male   *gibbed     re1/chrisdeath
