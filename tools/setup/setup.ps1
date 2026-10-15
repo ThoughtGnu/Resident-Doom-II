@@ -1,4 +1,4 @@
-# setup.ps1 - builds a fresh copy of Resident Doom from your own game files.
+# setup.ps1 - builds a fresh copy of Resident Doom II from your own game files.
 # Run it with setup.bat (double-click). It:
 #   1. finds (or asks for) your GOG Resident Evil folder and your doom2.wad
 #   2. checks they're the right files
@@ -41,7 +41,7 @@ function Fail($msg) {
     exit 1
 }
 
-Say 'Resident Doom setup' 'White'
+Say 'Resident Doom II setup' 'White'
 Say "Game folder: $Game"
 if ($Game -match '[^\x20-\x7E]') { Say 'Note: the game folder path has unusual characters; if anything fails, move the folder to a simple path like C:\Games\Resident-Doom.' 'Yellow' }
 
@@ -122,7 +122,7 @@ if ($Pictures) {
     # -Pictures: only the Level Select pictures again (everything else is kept)
     Step 'Taking only the Level Select pictures again'
     foreach ($need in $exe, $gzExe, (Join-Path $Game 'iwad\doom2.wad'), (Join-Path $mod 'models\jill\jill_unarmed.iqm')) {
-        if (-not (Test-Path -LiteralPath $need)) { Fail 'Resident Doom isn''t fully set up yet: run setup.bat first (without -Pictures).' }
+        if (-not (Test-Path -LiteralPath $need)) { Fail 'Resident Doom II isn''t fully set up yet: run setup.bat first (without -Pictures).' }
     }
     $Force = $true
 } else {
@@ -191,7 +191,7 @@ if ($GZDoom) {
     $src = if (Test-Path -LiteralPath $GZDoom -PathType Leaf) { Split-Path -Parent $GZDoom } else { $GZDoom }
     $v = GZ-Version (Join-Path $src 'gzdoom.exe')
     if (-not $v) { Fail "No gzdoom.exe in $src." }
-    if (-not $v.StartsWith($GZVersion)) { Fail "That GZDoom is version $v; Resident Doom needs GZDoom 4.14.2. Run setup without -GZDoom to download it." }
+    if (-not $v.StartsWith($GZVersion)) { Fail "That GZDoom is version $v; Resident Doom II needs GZDoom 4.14.2. Run setup without -GZDoom to download it." }
     if ((Resolve-Path -LiteralPath $src).Path -ne (Join-Path $Game 'tools\gzdoom')) {
         New-Item -ItemType Directory -Force $gzDir | Out-Null
         Copy-Item -Path (Join-Path $src '*') -Destination $gzDir -Recurse -Force -Exclude '*.ini', 'Save', 'savegames'
@@ -273,6 +273,6 @@ if ($NoCapture) {
 
 # --- done ------------------------------------------------------------------
 Write-Host ''
-Write-Host 'Setup complete. Double-click play.bat to play Resident Doom.' -ForegroundColor Green
+Write-Host 'Setup complete. Double-click play.bat to play Resident Doom II.' -ForegroundColor Green
 Done
 exit 0

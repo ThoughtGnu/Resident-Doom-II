@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================================================
-#  Resident Doom setup for macOS (Apple Silicon or Intel).
+#  Resident Doom II setup for macOS (Apple Silicon or Intel).
 #
 #  Run it once before playing: open Terminal, go to this folder and type
 #      bash setup.command
@@ -9,7 +9,7 @@
 #  It needs your own game files, copied from a Windows PC (GOG's games are
 #  Windows-only, so they can't be installed on a Mac):
 #    - the whole "Resident Evil" folder from GOG (ResidentEvil.exe + USA)
-#    - doom2.wad (and doom.wad / id24res.wad if you have them) from GOG or
+#    - doom2.wad (and id24res.wad if you have it) from GOG or
 #      Steam DOOM II or DOOM + DOOM II
 #  It downloads the .NET 8 SDK (to build the converter) and GZDoom 4.14.2
 #  into this folder; nothing is installed on your Mac.
@@ -56,7 +56,7 @@ fail() {
     exit 1
 }
 
-say "Resident Doom setup"
+say "Resident Doom II setup"
 say "Game folder: $GAME"
 [ "$(uname)" = "Darwin" ] || say "Note: this script is made for macOS; on Windows use setup.bat."
 
@@ -69,7 +69,7 @@ if [ $PICS -eq 1 ]; then
     step "Taking only the Level Select pictures again"
     [ -x "$GZBIN" ] && [ -f "$GAME/tools/re1convert/bin-mac/re1convert.dll" ] && [ -x "$DOTNET" ] \
         && [ -f "$GAME/iwad/doom2.wad" ] && [ -f "$GAME/mod/models/jill/jill_unarmed.iqm" ] \
-        || fail "Resident Doom isn't fully set up yet: run bash setup.command first (without --pictures)."
+        || fail "Resident Doom II isn't fully set up yet: run bash setup.command first (without --pictures)."
     FORCE=1
 else
 
@@ -169,7 +169,7 @@ gz_version() { /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$
 if [ -n "$GZAPP" ]; then
     v="$(gz_version "$GZAPP")"
     [ -n "$v" ] || fail "That isn't a GZDoom app: $GZAPP"
-    case "$v" in g4.14.2*|4.14.2*) ;; *) fail "That GZDoom is version $v; Resident Doom needs GZDoom 4.14.2. Run setup without --gzdoom to download it." ;; esac
+    case "$v" in g4.14.2*|4.14.2*) ;; *) fail "That GZDoom is version $v; Resident Doom II needs GZDoom 4.14.2. Run setup without --gzdoom to download it." ;; esac
     mkdir -p "$GZ_DIR"; rm -rf "$APP"; ditto "$GZAPP" "$APP" || fail "Could not copy GZDoom."
     say "Using your GZDoom ($v)."
 elif [ $FORCE -eq 0 ] && case "$(gz_version "$APP")" in g4.14.2*|4.14.2*) true ;; *) false ;; esac; then
@@ -245,5 +245,5 @@ else
 fi
 
 echo
-echo "Setup complete. Double-click play.command to play Resident Doom (or type: bash play.command)."
+echo "Setup complete. Double-click play.command to play Resident Doom II (or type: bash play.command)."
 exit 0

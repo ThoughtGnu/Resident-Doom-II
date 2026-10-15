@@ -1,0 +1,3 @@
+// The name in the game window's title bar (and on GZDoom's startup window),
+// instead of the IWAD's "DOOM 2: KEX Edition". GZDoom reads this before loading.
+STARTUPTITLE = "Resident Doom II"

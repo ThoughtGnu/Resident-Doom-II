@@ -131,7 +131,7 @@ extend class RECameraHandler
 		autoCam = REFixedCamera(Actor.Spawn("REFixedCamera", (0, 0, 0)));
 		if (autoCam != null) autoCam.CameraFOV = AUTO_FOV;
 		autoProbe = REFixedCamera(Actor.Spawn("REFixedCamera", (0, 0, 0)));
-		Console.Printf("Resident Doom: no hand-made cameras for %s, using %d automatic camera spots.",
+		Console.Printf("Resident Doom II: no hand-made cameras for %s, using %d automatic camera spots.",
 			level.MapName, candX.Size());
 	}
 

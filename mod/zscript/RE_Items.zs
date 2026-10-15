@@ -814,7 +814,7 @@ class REWeapon : Weapon
 		int lump = Wads.CheckNumForFullName(file);
 		if (lump < 0)
 		{
-			Console.Printf("Resident Doom: %s not found (run re1convert viewarms).", file);
+			Console.Printf("Resident Doom II: %s not found (run re1convert viewarms).", file);
 			return;
 		}
 		Array<String> lines;

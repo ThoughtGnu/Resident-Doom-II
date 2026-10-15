@@ -1,4 +1,4 @@
-// Setup.cs - the steps setup runs, so a fresh copy of Resident Doom can build
+// Setup.cs - the steps setup runs, so a fresh copy of Resident Doom II can build
 // every picture, model and sound from the player's own game files:
 //
 //   re1convert check <RE1 folder> <doom2.wad>      are these the right files?
@@ -284,17 +284,14 @@ namespace Re1Convert
 
         // The title screen (hires/TITLEPIC.png, 1120x400): RE1's title art with
         // its RESIDENT EVIL lettering painted out, RESIDENT put back above the
-        // DOOM logo, wide sides from the same art blurred and darkened. The DOOM
-        // logo is the original DOOM's (doom.wad, next to doom2.wad in the DOOM +
-        // DOOM II releases); without it, DOOM II's own logo. Then the menu logo
-        // (graphics/RELOGOHR.png, 492x575) cut from it.
+        // DOOM II logo (doom2.wad's own M_DOOM, the II under it): RESIDENT DOOM
+        // II. Wide sides from the same art blurred and darkened. Then the menu
+        // logo (graphics/RELOGOHR.png, 492x575) cut from it.
         static void TitleArt(string usa, string doomWad, string mod)
         {
             string wad = Fs.Resolve(doomWad);
-            string doom1 = Fs.Resolve(Path.Combine(Path.GetDirectoryName(Path.GetFullPath(wad)), "doom.wad"));
-            bool haveDoom1 = File.Exists(doom1) && WadLumps(doom1) != null && WadLumps(doom1).ContainsKey("M_DOOM");
-            var logo = DoomPatch(haveDoom1 ? doom1 : wad, "M_DOOM");
-            Console.WriteLine(haveDoom1 ? "DOOM logo: from doom.wad" : "DOOM logo: doom.wad not found next to doom2.wad, using DOOM II's logo");
+            var logo = DoomPatch(wad, "M_DOOM");
+            Console.WriteLine("DOOM II logo: from doom2.wad");
 
             const int W = 320, H = 240;
             var src = Pix(Path.Combine(usa, "Data/TITLE.PIX"), W, H);
@@ -362,7 +359,7 @@ namespace Re1Convert
                 g.DrawImage(Tint(word, Color.FromArgb(200, 0, 0, 0)), wx + 3 * S, wy + 3 * S, ww, wh);
                 g.DrawImage(word, wx, wy, ww, wh);
                 // Doom's pixels are 1.2x taller than wide
-                double ls = haveDoom1 ? 1.55 : 1.4;   // DOOM II's logo is taller (the II under it)
+                const double ls = 1.4;   // DOOM II's logo is tall (the II under it)
                 int lw = (int)(logo.Width * ls * S), lh = (int)(logo.Height * ls * 1.2 * S);
                 int lx = (W * S - lw) / 2, ly = wy + wh + 6 * S;
                 g.DrawImage(Tint(logo, Color.FromArgb(170, 0, 0, 0)), lx + 3 * S, ly + 3 * S, lw, lh);
@@ -393,12 +390,13 @@ namespace Re1Convert
             MenuLogo(title, logo, mod);
         }
 
-        // The RESIDENT DOOM logo above the menus: RESIDENT cut from the title
-        // picture by colour, DOOM 4x below it; always 492x575 (textures.txt).
+        // The RESIDENT DOOM II logo above the menus: RESIDENT cut from the title
+        // picture by colour, DOOM II 4x below it; always 492x575 (textures.txt).
         static void MenuLogo(Bitmap t, Bitmap doom, string mod)
         {
             var res = new Bitmap(t.Width, t.Height);
             var rowCount = new int[t.Height];
+            var rowAny = new bool[t.Height];
             int lim = (int)(t.Height * 0.47);   // only above the DOOM logo
             for (int y = 0; y < lim; y++)
                 for (int x = 0; x < t.Width; x++)
@@ -409,6 +407,7 @@ namespace Re1Convert
                     {
                         int a = Math.Min(255, (redness - 40) * 255 / 50);
                         res.SetPixel(x, y, Color.FromArgb(a, c.R, c.G, c.B));
+                        rowAny[y] = true;
                         if (a > 128) rowCount[y]++;
                     }
                 }
@@ -416,6 +415,14 @@ namespace Re1Convert
             for (int y = 0; y < lim; y++) if (rowCount[y] > 40) { minY = Math.Min(minY, y); maxY = Math.Max(maxY, y); }
             for (int y = minY; y <= maxY; y++) for (int x = 0; x < t.Width; x++) if (res.GetPixel(x, y).A > 128) { minX = Math.Min(minX, x); maxX = Math.Max(maxX, x); }
             if (minY > maxY || minX > maxX) throw new Exception("RESIDENT not found in the title picture");
+            // RESIDENT is the first unbroken block of red rows. Red after the gap
+            // under it is the top edge of the DOOM II logo below, which would show
+            // as short red dashes between the words: cleared (the size and place
+            // of RESIDENT stay as measured above).
+            int end = minY;
+            while (end + 1 <= maxY && rowAny[end + 1]) end++;
+            for (int y = end + 1; y <= maxY; y++)
+                for (int x = 0; x < t.Width; x++) res.SetPixel(x, y, Color.FromArgb(0, 0, 0, 0));
             // the title picture is shown 4:3 (1120x400 -> 748x561)
             double rw = (maxX - minX + 1) * 0.6679, rh = (maxY - minY + 1) * 1.4025;
             const int DW = 492, DH = 240;   // DOOM at 4x (DOOM's logo is 123x60)

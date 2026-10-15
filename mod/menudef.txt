@@ -11,7 +11,7 @@ ListMenu "PlayerclassMenu"
 	Class "RECharSelectMenu"
 }
 
-// Main menu in game (Esc): the RESIDENT DOOM logo above, the red menu font. In game, the
+// Main menu in game (Esc): the RESIDENT DOOM II logo above, the red menu font. In game, the
 // "Main Menu" item (end the game, back to the title) is added at the end.
 // Manual, Records, Cheats and Credits are under Extras (below).
 ListMenu "MainMenu"
@@ -132,7 +132,7 @@ OptionMenu "REAdvancedMenu"
 	Command "$OPTMNU_CONSOLE", "menuconsole"
 }
 
-// Settings > Gameplay: Resident Doom's own settings (cvarinfo.txt).
+// Settings > Gameplay: Resident Doom II's own settings (cvarinfo.txt).
 OptionValue "RESaveModes"
 {
 	0, "Normal (save anytime)"
@@ -141,7 +141,7 @@ OptionValue "RESaveModes"
 }
 OptionValue "REInvStyles"
 {
-	0, "Resident Doom (default)"
+	0, "Resident Doom II (default)"
 	1, "RE1 Classic"
 }
 OptionValue "RELightModes"

@@ -1,4 +1,4 @@
-# Every file that goes into the Resident Doom repository (the whitelist in .gitignore).
+# Every file that goes into the Resident Doom II repository (the whitelist in .gitignore).
 # Made by checking with git; nothing else may be uploaded. No Capcom or id Software files,
 # nothing built from them, no GZDoom, settings, saves or screenshots.
 
@@ -14,6 +14,7 @@ keys.cfg
 LICENSE
 MANUAL.md
 mod/cvarinfo.txt
+mod/gameinfo.txt
 mod/graphics/M_DOOM.png
 mod/keyconf.txt
 mod/language.txt

@@ -1,4 +1,6 @@
-# Resident Doom: Resident Evil 1 × Doom II
+# Resident Doom II: Resident Evil 1 × Doom II
+
+A separate project by ThoughtGnu, inspired by Drelvak's Resident Doom. Not an official sequel.
 
 **Resident Evil 1, played through DOOM II.** Jill Valentine and Chris Redfield,
 with their real models and animations from the 1996 PC game, explore DOOM II's
@@ -30,7 +32,7 @@ from **your own copies** of the games.
 ## Install on Windows
 
 1. **Install both games** from GOG / Steam as usual (if they aren't already).
-2. **Get Resident Doom:** on the repository's GitHub page, click the green
+2. **Get Resident Doom II:** on the repository's GitHub page, click the green
    **Code** button > **Download ZIP**. **Don't double-click the zip** (that
    opens it like a folder and hides the Unblock box). Instead, in Downloads,
    right-click the zip > **Properties** > tick **Unblock** if you see it > OK.
@@ -67,14 +69,14 @@ Mac. So the game files come from a Windows PC where they're installed:
      `C:\Program Files (x86)\GOG Galaxy\Games\Resident Evil`, or
      `C:\Program Files\...`). The whole folder, not just `USA`: setup needs
      `ResidentEvil.exe` too.
-   - **doom2.wad**, plus **doom.wad** and **id24res.wad** if they're next to it
-     (DOOM + DOOM II has all three).
-2. **On the Mac**, download Resident Doom (green **Code** button > **Download
+   - **doom2.wad**, plus **id24res.wad** if it's next to it
+     (DOOM + DOOM II has it).
+2. **On the Mac**, download Resident Doom II (green **Code** button > **Download
    ZIP**) and unzip it, for example into your Documents folder.
 3. Copy the files from step 1 onto the Mac, for example `Documents/Resident Evil`
    and `Documents/DOOM`.
 4. Open **Terminal** (Applications > Utilities), type `cd ` (with a space),
-   drag the Resident Doom folder onto the Terminal window, press Return, then type:
+   drag the Resident Doom II folder onto the Terminal window, press Return, then type:
 
    ```
    bash setup.command
@@ -143,7 +145,7 @@ Keys come from `keys.cfg` every time the game starts; edit it to change them.
 - **Save mode:** Normal (save any time), Typewriter (only at typewriters), or
   Classic RE (typewriters, and each save uses an Ink Ribbon)
 - **Lighting:** Doom or RE1 (darker)
-- **Inventory style:** Resident Doom, or RE1 Classic (RE1's own status screen)
+- **Inventory style:** Resident Doom II, or RE1 Classic (RE1's own status screen)
 - **AI partner** and **Partner pickups** (RE5 style: they pick up ammo for their gun)
 - **Starting view:** third person (fixed cameras) or first person
 - **Flat corpses:** dead monsters lie flat on the floor (first person only, both views, or off)
@@ -169,16 +171,14 @@ Weapons), or console codes (~): `starsteam`, `rocketman`, `jillsandwich`,
 
 - **Resident Evil:** only the GOG version is supported.
 - **DOOM II:** tested with the 2024 DOOM + DOOM II re-release. The classic DOOM
-  II (1.9) works too. The title screen uses the original DOOM logo when
-  `doom.wad` is next to your `doom2.wad` (DOOM + DOOM II has it); otherwise it
-  shows DOOM II's logo.
+  II (1.9) works too.
 - Doom II's monsters are still Doom's monsters (with RE1-style corpses and poison).
 - The mansion map has no exit yet (so no record for it).
 - Single player only: there's no online co-op (the partner in **Both** is the computer).
 - **Mac:** the game files must come from a Windows install (see above).
   CapsLock (always run) may behave differently, F6 may need the **fn** key,
   and on a trackpad, aim with a two-finger click or Ctrl.
-- Saved games may not load after a big Resident Doom update.
+- Saved games may not load after a big Resident Doom II update.
 
 ## If something goes wrong
 
@@ -203,7 +203,7 @@ Weapons), or console codes (~): `starsteam`, `rocketman`, `jillsandwich`,
 
 ## License
 
-Resident Doom's own code is free software under the **GNU General Public
+Resident Doom II's own code is free software under the **GNU General Public
 License v3** ([LICENSE](LICENSE)). Other projects it uses or builds on are listed
 in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md). For how everything works
 inside, see [docs/DEVELOPER.md](docs/DEVELOPER.md).

@@ -96,6 +96,6 @@ user string re_rec_REMAP01 = "";
 user string re_rec_BOSS = "";
 user string re_rec_last = "";   // the character and difficulty last recorded (the Records screen starts there)
 
-// Settings > Gameplay > Inventory style: 0 Resident Doom (default), 1 RE1 Classic (RE1's own status
+// Settings > Gameplay > Inventory style: 0 Resident Doom II (default), 1 RE1 Classic (RE1's own status
 // screen and item box screen, RE_InvClassic.zs). Only the look; kept in the settings file.
 server int re_invstyle = 0;

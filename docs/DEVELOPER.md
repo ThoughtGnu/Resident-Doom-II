@@ -1,10 +1,10 @@
-# Resident Doom: developer notes
+# Resident Doom II: developer notes
 
-How everything in Resident Doom works and is built, for whoever works on it
+How everything in Resident Doom II works and is built, for whoever works on it
 next. Players: see the [README](../README.md) and the
 [Player Manual](../MANUAL.md) (also in the game: main menu > Extras > Manual).
 
-Resident Doom is a Resident Evil 1-style game running in GZDoom: Jill's and
+Resident Doom II is a Resident Evil 1-style game running in GZDoom: Jill's and
 Chris's real RE1 models, tank controls, fixed camera angles, an RE-style
 inventory and darker RE1 lighting. The rules are copied from the RE1 PC
 decompilation (ecruells/resident-evil-pc-decomp, GPL-3.0; plain-English notes
@@ -45,7 +45,7 @@ in a few pixels).
 
 ## How to play
 
-* **`play.bat`**: opens at the Resident Doom title screen ("PRESS ENTER TO
+* **`play.bat`**: opens at the Resident Doom II title screen ("PRESS ENTER TO
   PLAY", with the credit lines under it). Only Enter opens the menu; other
   keys do nothing there, and Esc in the menu goes back to the title. New Game asks **Jill or Chris** (RE1's character-select desk, both
   drawn from their RE1 models), then Doom II's levels or "Mansion - (custom level)".
@@ -293,7 +293,7 @@ aim stance. Picking Both asks which one you control, on the same kind of
 screen.
 
 **Main menu** (Enter on the title screen, or Esc in game; in game it has the small
-RESIDENT DOOM logo above the list, while over the title picture it doesn't need one), in this order:
+RESIDENT DOOM II logo above the list, while over the title picture it doesn't need one), in this order:
 New Game, Level Select, Load Game, Save Game, Settings, Extras, Quit Game. In
 game, **Main Menu** is added at the end.
 
@@ -311,12 +311,12 @@ turn pages, and right-click to go back. The same text is in
 
 **Settings** (GZDoom's own Options menu can't be renamed by a mod, so this is
 our own menu opening the same GZDoom pages):
-- **Controls (every action and its keys)**: a list of every Resident Doom action
+- **Controls (every action and its keys)**: a list of every Resident Doom II action
   (tank movement, run, aim, fire, action, inventory, first / third person,
   jump, crouch, lighting mode, quicksave, weapons, menus) with the keys bound
   to it right now. It reads GZDoom's bindings live, so a key changed in
   Customize Controls shows there at once (`mod/zscript/RE_Controls.zs`).
-- **Gameplay**: Resident Doom's own settings, below.
+- **Gameplay**: Resident Doom II's own settings, below.
 - **Controls**: Customize Controls, Mouse, Gamepad.
 - **Video**: Display Options, Set Video Mode.
 - **Audio**: Sound Options.
@@ -330,7 +330,7 @@ our own menu opening the same GZDoom pages):
 |---|---|---|
 | Save mode | Normal (save anytime) / Typewriter (typewriter only) / Classic RE (typewriter + Ink Ribbon) | `re_save_classic 0 / 2 / 1` |
 | Lighting | Doom (default) / RE1 (also key L) | `re_dark 0 / 1` |
-| Inventory style | Resident Doom (default) / RE1 Classic: RE1's own status screen and item box screen (see below) | `re_invstyle 0 / 1` |
+| Inventory style | Resident Doom II (default) / RE1 Classic: RE1's own status screen and item box screen (see below) | `re_invstyle 0 / 1` |
 | AI partner | on / off: off = no partner, and no Both choice | `re_ai_partner 1 / 0` |
 | Partner pickups | Off (default) / On (RE5 style): the AI partner picks up only ammo for the gun they hold, and hands it to you with that gun when you swap guns | `re_partner_pickups 0 / 1` |
 | Starting view | Third person (default) / First person, at every start: a new game, a level start, a loaded save and Continue; V still switches any time. New Game also asks it once, after the character (and partner), starting on this setting; your pick changes it | `re_start_view 0 / 1` |
@@ -830,6 +830,7 @@ The sounds are RE1's, copied from your GOG folder into `mod/sounds/re1/`.
 | `tools/pack_map.ps1`          | rebuilds the mansion map file after you edit the map text |
 | `tools/re1convert/`           | converts Jill and Chris from your RE1 files into GZDoom models (see below) |
 | `mod/`                        | the mod itself (GZDoom loads this whole folder) |
+| `mod/gameinfo.txt`           | the window title, "Resident Doom II" (`STARTUPTITLE`; GZDoom reads it before loading) |
 | `mod/models/jill/`, `mod/models/chris/` | each character's models (one per weapon), first-person arms and texture |
 | `mod/modeldef.txt`            | tells GZDoom which model draws each character and weapon |
 | `mod/zscript/RE_CharSelect.zs`, `mod/menudef.txt` | the Jill / Chris select screen; the main menu with Cheats, and the Cheats screen |
@@ -842,7 +843,7 @@ The sounds are RE1's, copied from your GOG folder into `mod/sounds/re1/`.
 | `mod/models/props/typewriter.iqm`, `typewriter.png` | the typewriter: a low-poly 3D typewriter on a small wooden table, built by `tools\re1convert\re1convert.exe prop typewriter mod\models\props` (`Prop.cs`) |
 | `mod/graphics/TYPEBACK.png` | the save prompt's background, from RE1's `Data\TYPE00.TIM` |
 | `mod/zscript/RE_Partner.zs`   | the AI partner (Both) |
-| `mod/graphics/RELOGOHR.png`, `mod/textures.txt` | the RESIDENT DOOM logo above the in-game pause menu: RESIDENT cut from the title picture, DOOM from the original DOOM's `M_DOOM` (`re1convert titleart`, reading doom.wad next to your doom2.wad, or DOOM II's own logo without it) |
+| `mod/graphics/RELOGOHR.png`, `mod/textures.txt` | the RESIDENT DOOM II logo above the in-game pause menu: RESIDENT cut from the title picture, DOOM II from doom2.wad's own `M_DOOM` (`re1convert titleart`) |
 | `mod/graphics/SELBT00.png`–`SELBT24.png` | the Both animation on the select screen: Jill and Chris turn back to back and raise their guns (`re1convert bothanim`, from their RE1 models) |
 | `mod/zscript/RE_LevelSelect.zs` | the Level Select screen and the Final Boss start |
 | `mod/graphics/CARDJILL.png`, `CARDCHRS.png` | the ID cards on the Level Select screen, from RE1's `Data\Select_b.tim` |
@@ -863,7 +864,7 @@ The sounds are RE1's, copied from your GOG folder into `mod/sounds/re1/`.
 | `mod/zscript/RE_ItemBox.zs`  | the linked item boxes and the box screen |
 | `mod/models/props/itembox.md3`, `itembox.png` | the item box model with its opening lid (`re1convert itembox`, `ItemBox.cs`) |
 | `mod/sounds/re1/`             | RE1's weapon sounds |
-| `mod/hires/TITLEPIC.png`     | the title screen: RE1's title art (`TITLE.PIX`) with the DOOM logo from the original DOOM's doom.wad (`M_DOOM`, without the "II"). Made from your own game files, for your own use. The text on it (PRESS ENTER TO PLAY, credits) and the Enter-only key are `mod/zscript/RE_Title.zs` |
+| `mod/hires/TITLEPIC.png`     | the title screen: RE1's title art (`TITLE.PIX`) with RESIDENT above the DOOM II logo from doom2.wad (`M_DOOM`, with the "II" under it): RESIDENT DOOM II. Made from your own game files, for your own use. The text on it (PRESS ENTER TO PLAY, credits) and the Enter-only key are `mod/zscript/RE_Title.zs` |
 | `mod/graphics/M_DOOM.png`     | an empty picture, so the main menu doesn't draw a second DOOM logo over the title |
 | `mod/zscript/RE_Const.zs`     | RE1's speeds and turn rates, converted |
 | `mod/maps/src/TEXTMAP.txt`    | the mansion map, as text |

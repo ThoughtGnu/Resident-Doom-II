@@ -1,6 +1,6 @@
 @echo off
 rem ==========================================================================
-rem  Resident Doom - straight into our hand-made mansion map (REMAP01).
+rem  Resident Doom II - straight into our hand-made mansion map (REMAP01).
 rem
 rem  Starts as Jill. To play Chris:  play_mansion.bat +playerclass Chris
 rem  Keys are set from keys.cfg every time (edit it to change them). Every key
@@ -13,6 +13,6 @@ if not exist "mod\models\jill\jill_unarmed.iqm" goto nosetup
 start "" "tools\gzdoom\gzdoom.exe" -iwad "iwad\doom2.wad" -file "mod" +exec "keys.cfg" +playerclass Jill +map REMAP01 %*
 goto :eof
 :nosetup
-echo Resident Doom isn't set up yet: double-click setup.bat first.
+echo Resident Doom II isn't set up yet: double-click setup.bat first.
 echo (It builds the game files from your own Resident Evil and DOOM II.)
 pause

@@ -1,4 +1,4 @@
-# Testing Resident Doom on a Mac
+# Testing Resident Doom II on a Mac
 
 A checklist for the first Mac test (MacBook Pro M2 Pro, or any Mac with macOS
 10.15 or newer). It takes about 15 minutes plus download time.
@@ -11,10 +11,10 @@ OneDrive, Google Drive):
 - the whole **Resident Evil** folder:
   `C:\Program Files\GOG Galaxy\Games\Resident Evil` (copy the folder itself,
   with `ResidentEvil.exe` and `USA` inside; about 1 GB)
-- from `C:\Program Files\GOG Galaxy\Games\DOOM + DOOM II`: **doom2.wad**,
-  **doom.wad** and **id24res.wad**
+- from `C:\Program Files\GOG Galaxy\Games\DOOM + DOOM II`: **doom2.wad** and
+  **id24res.wad**
 
-## 2. On the Mac: get Resident Doom
+## 2. On the Mac: get Resident Doom II
 
 1. Sign in on **github.com** as ThoughtGnu and open the private
    **Resident-Doom** repository.
@@ -53,7 +53,7 @@ them, it asks you to drag them onto the Terminal window.)
   macOS may refuse to open it: right-click it > **Open** > **Open**. Or type
   `bash play.command` in Terminal.
 - Check these:
-  - [ ] the title screen (RESIDENT DOOM), Enter opens the menu
+  - [ ] the title screen (RESIDENT DOOM II), Enter opens the menu
   - [ ] New Game > character select shows Jill and Chris
   - [ ] the start of MAP01: Jill walks (Up), turns (Left / Right), runs (Shift)
   - [ ] aim (hold **Ctrl**) and fire (**E**) after equipping the Beretta (**Tab** > Beretta > EQUIP)

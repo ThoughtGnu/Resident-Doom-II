@@ -1,6 +1,6 @@
 @echo off
 rem ==========================================================================
-rem  Resident Doom setup - double-click this once before playing.
+rem  Resident Doom II setup - double-click this once before playing.
 rem
 rem  It finds your GOG Resident Evil and your doom2.wad (GOG or Steam), builds
 rem  every model, picture and sound from them, and downloads GZDoom 4.14.2.

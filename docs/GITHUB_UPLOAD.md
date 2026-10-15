@@ -1,4 +1,4 @@
-# Putting Resident Doom on GitHub (private)
+# Putting Resident Doom II on GitHub (private)
 
 Step by step, for a first-time GitHub user. You'll use **GitHub Desktop**, which
 is already installed on this PC. The Resident-Doom folder is already prepared:
@@ -38,7 +38,7 @@ It must **not** contain: `iwad/`, `doom2.wad`, `mod/models/`, `mod/sounds/`,
 
 ## 4. Commit (save this version)
 
-1. At the bottom left, in **Summary**, type: `First version of Resident Doom`
+1. At the bottom left, in **Summary**, type: `First version of Resident Doom II`
 2. Click **Commit to main**.
 
 ## 5. Publish as a PRIVATE repository

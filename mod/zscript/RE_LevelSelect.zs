@@ -397,7 +397,7 @@ class REFinalBossHandler : EventHandler
 		probe.Destroy();
 		if (!seen || tag == 0)
 		{
-			Console.Printf("Resident Doom: no view of the Icon from the lift; normal start.");
+			Console.Printf("Resident Doom II: no view of the Icon from the lift; normal start.");
 			return false;
 		}
 		h += 16;   // a little margin so the opening is well in view
@@ -505,7 +505,7 @@ class REFinalBossHandler : EventHandler
 		pmo.Angle = brain != null ? pmo.AngleTo(brain) : 90;
 		pmo.Pitch = 0;
 		level.ExecuteSpecial(Floor_MoveToValue, pmo, null, false, ls.GetTag(0), 64, CAP_LIFT_TOP, 0);
-		Console.Printf("Resident Doom: Level Select picture view of the Icon of Sin");
+		Console.Printf("Resident Doom II: Level Select picture view of the Icon of Sin");
 	}
 }
 // An invisible stand-in the size of the player, to test spots.

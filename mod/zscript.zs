@@ -1,6 +1,6 @@
 version "4.14"
 
-// Resident Doom - a Resident Evil 1 style slice for GZDoom.
+// Resident Doom II - a Resident Evil 1 style slice for GZDoom.
 // Each file below is one piece of the game; start with TankPlayer.zs.
 
 #include "zscript/RE_Const.zs"

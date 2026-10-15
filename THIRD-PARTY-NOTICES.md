@@ -1,6 +1,6 @@
 # Third-party notices
 
-Resident Doom's own code (the GZDoom mod in `mod/`, the converter in
+Resident Doom II's own code (the GZDoom mod in `mod/`, the converter in
 `tools/re1convert/`, the setup scripts and launchers) is © ThoughtGnu and
 licensed under the GNU General Public License v3 (see [LICENSE](LICENSE)).
 
@@ -9,7 +9,7 @@ builds the characters, items, pictures and sounds from the player's own copies
 of the games, on the player's computer. Those built files are the player's to
 keep, not to share.
 
-## Projects Resident Doom uses or builds on
+## Projects Resident Doom II uses or builds on
 
 | Project | How it's used | License |
 |---|---|---|
@@ -26,7 +26,7 @@ keep, not to share.
 | **Resident Evil** (1996, PC, GOG release) | © Capcom | Jill's and Chris's models, animations and textures, item and prop models, pictures and sounds, built by setup from your copy |
 | **DOOM II** (and DOOM's logo from `doom.wad`, if present) | © id Software / ZeniMax | The game data GZDoom runs on: levels, monsters, textures, sounds |
 
-Resident Doom is a fan-made, non-commercial project, not affiliated with or
+Resident Doom II is a fan-made, non-commercial project, not affiliated with or
 endorsed by Capcom, id Software, ZeniMax, Bethesda or Microsoft.
 
 ## Inspiration

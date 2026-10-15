@@ -1,4 +1,4 @@
-# Resident Doom: Player Manual
+# Resident Doom II: Player Manual
 
 A short guide for new players. The same manual is in the game: **main menu > Extras >
 Manual**. Turn pages there with Left / Right, or click the tabs and buttons.
@@ -177,7 +177,7 @@ Damage is RE1's, against a zombie.
 
 **Doom's weapons become:**
 
-| Doom | Resident Doom |
+| Doom | Resident Doom II |
 |---|---|
 | Pistol | Beretta |
 | Shotgun | Shotgun |
@@ -222,7 +222,7 @@ and the item box screen look. Both styles do exactly the same things.
 
 | Style | Look |
 |---|---|
-| Resident Doom (default) | the mod's own screen |
+| Resident Doom II (default) | the mod's own screen |
 | RE1 Classic | RE1's own status screen: its item pictures, the character's portrait, the ECG (Fine / Caution / Danger / Poison in RE1's colours), the item slots (Jill 8, Chris 6), and the MAP / FILE / EXIT tabs above the slots. MAP opens the map, FILE this Manual and EXIT closes the screen; RADIO stays blank. The item box screen is RE1's too. |
 
 In RE1 Classic, Up from the top row of slots goes to the tabs.

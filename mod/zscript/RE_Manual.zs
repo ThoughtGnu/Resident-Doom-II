@@ -116,7 +116,7 @@ class REManualMenu : GenericMenu
 		"#TYPEWRITERS AND INK RIBBONS",
 		"Every map has a typewriter near the start, and long maps a second one about halfway. Face it and press E to save. One Ink Ribbon lies by the start typewriter and one by each halfway typewriter; they stack 3 to a slot. See SAVING.",
 		"#INVENTORY STYLE",
-		"Settings > Gameplay > Inventory style: Resident Doom (default) or RE1 Classic, a recreation of RE1's own status and item box screens with its pictures, portrait, ECG and MAP / FILE / EXIT tabs (MAP opens the map, FILE this Manual). Both do exactly the same things.",
+		"Settings > Gameplay > Inventory style: Resident Doom II (default) or RE1 Classic, a recreation of RE1's own status and item box screens with its pictures, portrait, ECG and MAP / FILE / EXIT tabs (MAP opens the map, FILE this Manual). Both do exactly the same things.",
 		"*",
 		"#MAP",
 		"Press M for the map screen. It shows what you've seen; the MAP item shows the whole level. Arrows move, + / - or the wheel zoom, M or Esc closes.",
@@ -400,7 +400,7 @@ class REManualMenu : GenericMenu
 		Screen.Dim(Color(255, 0, 0, 0), 0.92, 0, 0, Screen.GetWidth(), Screen.GetHeight());
 		Color gray = Color(255, 110, 110, 110), dark = Color(255, 20, 20, 24), sel = Color(255, 255, 220, 0), selBox = Color(255, 60, 52, 10);
 		REDraw.Text(20, 12, "MANUAL", Font.CR_GOLD, 2.0);
-		REDraw.Text(180, 20, "how to play Resident Doom", Font.CR_DARKGRAY);
+		REDraw.Text(180, 20, "how to play Resident Doom II", Font.CR_DARKGRAY);
 
 		// the section tabs
 		int section = pageSection[page];

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================================================
-#  Resident Doom for macOS - straight into Doom II's MAP01.
+#  Resident Doom II for macOS - straight into Doom II's MAP01.
 #  Double-click (or right-click > Open the first time), or type: bash play_doom2.command
 #  Keys are set from keys.cfg every time (edit it to change them). Every key
 #  and option is explained in the game (Esc > Extras > Manual) and in MANUAL.md.
@@ -11,7 +11,7 @@ cd "$GAME" || exit 1
 GZ_DIR="$GAME/tools/gzdoom-mac"
 GZBIN="$GZ_DIR/GZDoom.app/Contents/MacOS/gzdoom"
 if [ ! -x "$GZBIN" ] || [ ! -f "$GAME/iwad/doom2.wad" ] || [ ! -f "$GAME/mod/models/jill/jill_unarmed.iqm" ]; then
-    echo "Resident Doom isn't set up yet: run setup.command first."
+    echo "Resident Doom II isn't set up yet: run setup.command first."
     echo "(It builds the game files from your own Resident Evil and DOOM II.)"
     read -r -p "Press Return to close." _
     exit 1

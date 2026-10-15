@@ -280,7 +280,7 @@ class RECameraHandler : EventHandler
 		int lump = Wads.CheckNumForFullName("recams.txt");
 		if (lump < 0)
 		{
-			Console.Printf("Resident Doom: recams.txt not found, no fixed cameras.");
+			Console.Printf("Resident Doom II: recams.txt not found, no fixed cameras.");
 			return;
 		}
 

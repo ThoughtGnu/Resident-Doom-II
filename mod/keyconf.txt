@@ -1,4 +1,4 @@
-// Adds a "Resident Doom" page to Options > Customize Controls.
+// Adds a "Resident Doom II" page to Options > Customize Controls.
 
 alias re_inventory "openmenu REInventoryMenu"
 alias re_map "openmenu REMapMenu"
@@ -31,7 +31,7 @@ alias jillsandwich. "netevent re_cheatcode 2"
 alias inkribbon "netevent re_cheatcode 3"
 alias inkribbon. "netevent re_cheatcode 3"
 
-addkeysection "Resident Doom" ResidentDoom
+addkeysection "Resident Doom II" ResidentDoom
 addmenukey "Inventory screen" re_inventory
 addmenukey "Aim (hold)" +user1
 addmenukey "Run (hold)" +speed

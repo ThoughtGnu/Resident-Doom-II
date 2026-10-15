@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// RE_Controls.zs - Settings > Controls: every Resident Doom action and the
+// RE_Controls.zs - Settings > Controls: every Resident Doom II action and the
 // keys bound to it right now (read live from GZDoom's bindings, so a key
 // changed in Customize Controls shows here straight away). Text in the
 // Credits style: white labels, gray keys, gold section names.
@@ -133,6 +133,6 @@ class REControlsMenu : OptionMenu
 			else Words(f, Font.CR_GRAY, keyX, y, keys);
 			y += LINE;
 		}
-		String foot = "Change keys in Settings > Customize Controls (Resident Doom section).   Esc back";
+		String foot = "Change keys in Settings > Customize Controls (Resident Doom II section).   Esc back";
 		Words(f, Font.CR_DARKGRAY, 320 - f.StringWidth(foot) * TS / 2, 448, foot);
 	}}
